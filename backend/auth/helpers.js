@@ -6,19 +6,20 @@ function comparePass(username, password) {
   return bcrypt.compareSync(username, password);
 }
 
-function createUser(req) {
+function createUser(req, res, next) {
   const salt = bcrypt.genSaltSync();
   const hash = bcrypt.hashSync(req.body.password, salt);
-  return db.none(
-    "INSERT INTO users (user_id, username, password, email, first_name, last_name) VALUES (DEFAULT, ${username}, ${password}, ${email}, ${first_name}, ${last_name})",
+  return db.one(
+    "INSERT INTO users (user_id, username, password, email, fullname, location, travel_coverage) VALUES (DEFAULT, ${username}, ${password}, ${email}, ${fullname}, ${location}, ${travel_coverage}) RETURNING user_id",
     {
       username: req.body.username,
       password: hash,
       email: req.body.email,
-      first_name: req.body.first_name,
-      last_name: req.body.last_name
+      fullname: req.body.fullname,
+      location: req.body.location,
+      travel_coverage: req.body.travel_coverage
     }
-  );
+  )
 }
 
 function loginRequired(req, res, next) {

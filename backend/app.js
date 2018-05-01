@@ -41,6 +41,13 @@ app.use(passport.session());
 app.use('/', index);
 app.use('/users', users);
 
+app.get('/isloggedin', function(req, res) {
+    if(req.session.passport.user) {
+      res.status(200).send('loggedIn');
+    } else {
+      res.status(401).send('User not logged in.');
+    }
+});
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

@@ -1,6 +1,23 @@
-.App-header {
-  background-color: red;
+.home_div {
+  background-color: #DCDCDC;
   height: 150px;
   padding: 20px;
   color: black;
+}
+
+.button {
+    padding: 0px;
+    margin-left: 6px;
+    max-width: 69px;
+    max-height: 27px;
+    border: none;
+  }
+
+.landButton {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 1px;
+  width: 70%;
+  margin-left: 45%;
+  margin-right: auto;
 }
