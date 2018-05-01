@@ -1,23 +1,23 @@
 import React from "react"
 import { Link, Route, Switch } from 'react-router-dom';
 import "./ConceptBox.css";
-
-let ts = new Date();
+import axios from "axios";
 
 class ConceptBox extends React.Component {
   render() {
     const { concept_name, username,
             bulbs, skillssortedbyid, concept_id,
             user_id, description, concept_timestamp } = this.props.concept;
-    let timestamp = ts.toDateString('concept_timestamp')
+    let ts = new Date(concept_timestamp);
+    let timestamp = ts.toDateString(ts);
+    let cuttedDescription = description.split(" ").slice(0,10).join(" ");
     return (
       <div className="concept_box">
         <Link to={`/cl/${user_id}/${concept_id}`} style={{ textDecoration: 'none' }}>
           <h3>{username}</h3>
-          {/*<Link to={`/cl/${user_id}/${concept_id}`}> <img src={img} className="recipeImg" alt="recipeImg" style={styles.img} /></Link>*/}
           <h2>{concept_name}</h2>
-          <p>{description}</p>
-          <p>{skillssortedbyid}</p>
+          <p>description: {cuttedDescription}...More info</p>
+          <p>required skills: {skillssortedbyid}</p>
           <div className="likes">
             <img
               src="https://cdn0.iconfinder.com/data/icons/colourful-education/250/bulb-512.png" alt="bulbs"
@@ -25,7 +25,7 @@ class ConceptBox extends React.Component {
             />
             <p className="fav">{bulbs}</p>
           </div>
-          <p>{timestamp}</p>
+          <p>uploaded {timestamp}</p>
         </Link>
       </div>
     )

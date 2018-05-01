@@ -1,0 +1,435 @@
+.searchbarLogo {
+  margin-left: 220px;
+  width: 35px;
+  position: fixed;
+  margin-top: 0.3%;
+}
+
+.searchbarLogoName {
+  margin-left: 1%;
+  width: 200px;
+  position: fixed;
+  margin-top: -1%;
+}
+
+.addRecipeButton {
+  background-color: white;
+  border-radius: 6px;
+  height: 20px;
+  padding-bottom: 5px;
+  position: fixed;
+}
+
+.hoverIncrease:hover {
+  transform: scale(1.1, 1.1)
+}
+
+.notificationButton {
+  margin-left: -10%;
+  width: 70px;
+  margin-top: -22%;
+  margin-bottom: 0;
+}
+
+.notificationButton:hover {
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+  cursor: pointer;
+}
+
+.noAlert {
+  width: 35px;
+  margin-top: 2%;
+}
+
+.searchbar {
+  position: fixed;
+  width: 100%;
+  height: 6%;
+  padding-top: 10px;
+  padding-bottom: 9px;
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+  border-bottom-color: rgb(235, 232, 232);
+  background-color: #ccffcc;
+  display: flex;
+  justify-content: space-between;
+  z-index: 40;
+  margin-bottom: -40px;
+}
+
+.searchInput {
+  width: 25%;
+  margin-left: 37%;
+  position: fixed;
+  margin-top: 0.7%;
+}
+
+.react-autosuggest__container {
+  position: relative;
+  margin-left: 27%;
+}
+
+.react-autosuggest__input {
+  margin-top: 6px;
+  width: 320px;
+  height: 30px;
+  padding: 10px 20px;
+  font-family: Helvetica, sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  border: 1px solid rgb(209, 209, 209);
+  border-radius: 4px;
+}
+
+.react-autosuggest__input--focused {
+  outline: none;
+}
+
+.react-autosuggest__input--open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.react-autosuggest__suggestions-container {
+  display: none;
+}
+
+.react-autosuggest__suggestions-container--open {
+  display: block;
+  position: absolute;
+  top: 31px;
+  width: 320px;
+  border: 1px solid #aaa;
+  background-color: #fff;
+  font-family: Helvetica, sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  z-index: 2;
+}
+
+.react-autosuggest__suggestions-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.react-autosuggest__suggestion {
+  cursor: pointer;
+  padding: 10px 20px;
+}
+
+.react-autosuggest__suggestion--highlighted {
+  background-color: #ddd;
+}
+
+.footer {
+  margin: 9px 20px;
+  font-size: 12px;
+  color: #777;
+}
+
+.searchLink {
+  background-color: green;
+  border: none;
+  text-decoration: none;
+  margin-top: -15%;
+}
+
+.writingIcon {
+  width: 40px;
+  position: fixed;
+}
+
+.writingIcon:hover {
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+}
+
+.heartIcon {
+  width: 40px;
+  position: fixed;
+}
+
+.heartIcon:hover {
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+}
+
+.groupIcon {
+  width: 40px;
+  position: fixed;
+}
+
+.groupIcon:hover {
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+}
+
+.potluckIcon {
+  width: 40px;
+  position: fixed;
+}
+
+.potluckIcon:hover {
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+}
+
+.tooltip1:hover .tooltiptext1 {
+  visibility: visible;
+}
+
+.tooltip1 {
+  position: relative;
+  width: 80%;
+  /* margin-top: 2%; */
+  display: block;
+  margin-left: -15%;
+}
+
+.tooltip1 .tooltiptext1 {
+  visibility: visible;
+  width: 120px;
+  background-color: rgb(255, 231, 215);
+  color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+  margin-left: 10%;
+  margin-top: 18%;
+  
+}
+
+.tooltip2:hover .tooltiptext2 {
+  visibility: visible;
+}
+
+.tooltip2 {
+  position: relative;
+  /* border-bottom: 1px dotted black; If you want dots under the hoverable text */
+  width: 80%;
+  display: block;
+}
+
+.tooltip2 .tooltiptext2 {
+  visibility: visible;
+  width: 120px;
+  background-color: rgb(255, 231, 215);
+  color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+  margin-left: 170%;
+  margin-top: 18%;
+}
+
+.tooltip3:hover .tooltiptext3 {
+  visibility: visible;
+}
+
+.tooltip3 {
+  position: relative;
+  width: 90%;
+  /* margin-top: 2%; */
+  display: block;
+}
+
+.tooltip3 .tooltiptext3 {
+  visibility: hidden;
+  width: 120px;
+  background-color: rgb(255, 231, 215);
+  color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+  margin-left: -30%;
+  margin-top: 35px;
+}
+
+.tooltip4:hover .tooltiptext4 {
+  visibility: visible;
+}
+
+.tooltip4 {
+  position: relative;
+  width: 90%;
+  /* margin-top: 2%; */
+  display: block;
+}
+
+.tooltip4 .tooltiptext4 {
+  visibility: hidden;
+  width: 120px;
+  background-color: rgb(255, 231, 215);
+  color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 5;
+  margin-left: -30%;
+  margin-top: 35px;
+}
+
+.tooltip5:hover .tooltiptext5 {
+  visibility: visible;
+}
+
+.tooltip5 {
+  position: relative;
+  width: 90%;
+  /* margin-top: 2%; */
+  display: block;
+}
+
+.tooltip5 .tooltiptext5 {
+  visibility: hidden;
+  width: 120px;
+  background-color: rgb(255, 231, 215);
+  color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 5;
+  margin-left: -30%;
+}
+
+.menuicons {
+  width: 15%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.feedLink {
+  background-color: transparent;
+  border: transparent;
+}
+
+.bm-burger-button {
+  position: fixed;
+  width: 25px;
+  height: 15px;
+  left: 95%;
+  top: 2.7%;
+}
+
+.bm-burger-bars {
+  background: #696969;
+  height: 1%;
+}
+
+.bm-cross {
+  background: #bdc3c7;
+}
+
+.bm-cross-button {
+  height: 24px;
+  width: 24px;
+  margin-right: 82%;
+  margin-top: 4%;
+}
+
+.bm-menu {
+  background: #333333;
+  padding: 2.5em 1.5em 0;
+  font-size: 1.15em;
+  color: white;
+  margin-top: -2.9%;
+}
+
+.bm-item-list {
+  color: #265b75;
+  padding: 0.8em;
+  margin-left: 2%;
+  margin-top: 4%;
+}
+
+.menu-item {
+  background-color: #333333;
+  border: none;
+  text-decoration: none;
+  color: #bdc3c7;
+}
+
+.bm-overlay {
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 15;
+  margin-left: -100%;
+  margin-top: -0.7%;
+}
+
+/* @media only screen and (max-width: 934px) {
+  .menuButton {
+      display: none;
+  }
+  .notificationButton {
+    margin-left: 40px;
+  }
+  .tooltip4 {
+    display: none;
+  }
+  .tooltip1 {
+    display: none;
+  }
+  .tooltip2 {
+    display: none;
+  }
+  .tooltip3 {
+    display: none;
+  }
+
+}
+
+@media only screen and (max-width: 768px) {
+  .searchbarLogoName {
+    display: none;
+  }
+  .searchbarLogo {
+    margin-left: 4%;
+  }
+  .notificationButton {
+    margin-left: 30px;
+  }
+
+}
+
+@media only screen and (max-width: 600px) {
+  .menuButton {
+      display: none;
+  }
+
+.react-autosuggest__input {
+  margin-left: -10%;
+  width: 220px;
+}
+
+.react-autosuggest__suggestions-container--open {
+  width: 220px;
+  margin-left: -22px;
+}
+
+.notificationButton {
+  margin-left: 0px;
+}
+
+} */

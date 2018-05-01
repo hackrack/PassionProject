@@ -10,7 +10,8 @@ CREATE TABLE users(
   email VARCHAR,
   fullname VARCHAR,
   location VARCHAR,
-  user_img VARCHAR);
+  user_img VARCHAR,
+  travel_coverage VARCHAR);
 
 CREATE TABLE concepts(
   concept_id SERIAL PRIMARY KEY,
@@ -73,11 +74,11 @@ CREATE TABLE comments(
   comment_timestamp timestamp not null default CURRENT_TIMESTAMP);
 
 INSERT INTO users (username, password, email, fullname, location)
-  VALUES ('inomboy1', 'inomboy2', 'inomboy@ya.com', 'Inom Ibragimov', 'Jersey City, NJ'),
-  ('azamat', 'azamat', 'azamat@ya.com', 'Azamat Ibragimov', 'Newport, NJ, 07310'),
-  ('umed', 'umed', 'umed', 'Umed Ibrohimov', 'Navoi, TJ'),
-  ('husanboy', 'husanboy', 'husanboy@ya.com', 'Khusanboy Ibrohimov', 'Sommerset NJ'),
-  ('rashid', 'rashid', 'rashid@ya.com', 'Rashidbek Sadriddionov', 'Zafara, TJ');
+  VALUES ('inomboy1', '$2a$10$.MVvgjXGDNY5BspJcHdfqOMr5oEu3AxYiIxjOu8aUiA0LBXlXIWEq', 'inomboy@ya.com', 'Inom Ibragimov', 'Jersey City, NJ'),
+  ('azamat', '$2a$10$.MVvgjXGDNY5BspJcHdfqOMr5oEu3AxYiIxjOu8aUiA0LBXlXIWEq', 'azamat@ya.com', 'Azamat Ibragimov', 'Newport, NJ, 07310'),
+  ('umed', '$2a$10$.MVvgjXGDNY5BspJcHdfqOMr5oEu3AxYiIxjOu8aUiA0LBXlXIWEq', 'umed', 'Umed Ibrohimov', 'Navoi, TJ'),
+  ('husanboy', '$2a$10$.MVvgjXGDNY5BspJcHdfqOMr5oEu3AxYiIxjOu8aUiA0LBXlXIWEq', 'husanboy@ya.com', 'Khusanboy Ibrohimov', 'Sommerset NJ'),
+  ('rashid', '$2a$10$.MVvgjXGDNY5BspJcHdfqOMr5oEu3AxYiIxjOu8aUiA0LBXlXIWEq', 'rashid@ya.com', 'Rashidbek Sadriddionov', 'Zafara, TJ');
 
 INSERT INTO concepts (user_id, concept_name, description, platform, is_remote, location)
   VALUES (1, 'AddApp', 'lets build an app where it will show only adds ', 'mobile app', true, 'Jersey City, NJ'),
