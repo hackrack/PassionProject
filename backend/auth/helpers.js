@@ -2,7 +2,6 @@ const bcrypt = require("bcryptjs");
 const db = require("../db/index");
 
 function comparePass(username, password) {
-  console.log(username);
   return bcrypt.compareSync(username, password);
 }
 
