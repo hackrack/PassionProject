@@ -17,14 +17,21 @@ class Profile extends React.Component {
   }
 
   userInfo = (props) => {
-    console.log("params check id from url", this.props.id);
     axios
       .get(`/users/profile/${this.props.id}`)
       .then( (res) => {
-        console.log("inseide: userInfo id: ", this.props.id, res);
         this.setState({
           user: res.data
         })
+      })
+      .then( () => {
+        axios
+          .get(`/users/userlikes/${this.props.id}`)
+          .then( (res)=> {
+            this.setState({
+              concepts: res.data
+            })
+          })
       })
       .then( () => {
         axios
@@ -49,9 +56,6 @@ class Profile extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("prevProps: ", prevProps);
-    console.log("prevStates: ", prevState);
-    console.log("prev props", this.props);
     if (prevProps !== this.props) {
       this.userInfo();
     }

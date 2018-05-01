@@ -138,6 +138,8 @@ class Searchbar extends Component {
     event.preventDefault();
   }
 
+
+
   render() {
     const { value, suggestions, redirectLanding } = this.state;
     const inputProps = {
@@ -146,7 +148,7 @@ class Searchbar extends Component {
       onChange: this.onChange,
       onKeyPress: this.onKeyPress
     };
-
+console.log("this searchbar: ", this.props.user.user_id);
     return (
       <div className="searchbar">
         <Link to={`/cl/feed`}>
@@ -154,8 +156,8 @@ class Searchbar extends Component {
         </Link>
         <div className="menuicons">
           <div className="tooltip1">
-            <Link to={`/cl/createconcept`} className="searchLink">
-              <span className="tooltiptext1"> Products </span>
+            <Link to={`/cl/${35}/${7}`} className="searchLink">
+              <span className="tooltiptext1"> Concept </span>
             </Link>
           </div>
             <div className="tooltip2">

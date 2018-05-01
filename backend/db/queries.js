@@ -34,7 +34,6 @@ function sortedconceptsbylikes(req, res, next) {
 }
 
 function getUser(req, res, next) {
-  console.log("all info: ", req.user);
   db
     .any(
       `SELECT user_id, username, email, fullname, user_img, travel_coverage, location
@@ -82,6 +81,26 @@ function getSingleUser(req, res, next) {
   .catch(error => {
     res.json(error);
   });
+}
+
+function getAllUserLikes(req, res, next) {
+  console.log("getAllUserLikes");
+  return db
+    .any(
+      `SELECT *
+       FROM concepts
+       WHERE concept_id IN (
+       SELECT concept_id
+       FROM likes
+       WHERE user_id=$1)`,
+       [req.params.user_id]
+     )
+     .then(data => {
+       res.json(data);
+     })
+     .catch(error => {
+       res.json(error);
+     });
 }
 
 /*-------------------------------POST Request----------------------------------*/
@@ -208,7 +227,6 @@ function addSkills(req, res, next) {
     .catch(error => {
       res.json(error);
     });
-  // return db.none('INSERT INTO user_skills (user_id) VALUES (${user_id})', { user_id: req.params.user_id})
 }
 
 function loginUser(req, res, next) {
@@ -230,6 +248,51 @@ function loginUser(req, res, next) {
   })(req, res, next);
 }
 
+function createConcept(req, res, next) {
+  return db.one(
+    'INSERT INTO ' +
+    'concepts (concept_id, user_id, concept_name, description, is_remote, location) ' +
+    'VALUES (DEFAULT, ${user_id}, ${concept_name}, ${description}, ${is_remote}, ${location}) ' +
+    'RETURNING concept_id ',
+    {
+      user_id: req.user.user_id,
+      concept_name: req.body.concept_name,
+      description: req.body.description,
+      is_remote: req.body.is_remote,
+      location: req.body.location
+    })
+    .then(data => {
+      res.json(data);
+    })
+    .catch(error => {
+      res.json(error);
+    });
+}
+
+function conceptSkills(req, res, next) {
+  return db
+    .task(t => {
+      const skills = req.body.skills;
+      const queries = skills.map(skill => {
+        return t.none(
+          "INSERT INTO concept_skills (concept_id, concept_skill) " +
+          "VALUES (${concept_id}, ${concept_skill})",
+          {
+            concept_id: req.params.concept_id,
+            concept_skill: skill.name
+          }
+        );
+      });
+      return t.batch(queries);
+    })
+    .then(data => {
+      res.json("success");
+    })
+    .catch(error => {
+      res.json(error);
+    });
+}
+
 module.exports = {
   /*-------GET Request-------*/
   logoutUser,
@@ -237,10 +300,13 @@ module.exports = {
   getUser,
   getSingleUser,
   getSingleUserSkills,
+  getAllUserLikes,
   /*-------POST Request-------*/
   loginUser,
   registerUser,
   addSkills,
   addPoints,
+  createConcept,
+  conceptSkills,
   /*-------PATCH Request-------*/
 }
