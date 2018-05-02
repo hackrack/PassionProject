@@ -84,7 +84,6 @@ function getSingleUser(req, res, next) {
 }
 
 function getAllUserLikes(req, res, next) {
-  console.log("getAllUserLikes");
   return db
     .any(
       `SELECT *
@@ -101,6 +100,55 @@ function getAllUserLikes(req, res, next) {
      .catch(error => {
        res.json(error);
      });
+}
+
+function getSingleConcept(req, res, next) {
+  return db.any(
+      `SELECT COUNT(likes.concept_id) AS
+       favorites_count, USERname, users.user_id, concept_name,
+       description, concepts.location, is_remote,concept_timestamp
+       FROM concepts
+       LEFT JOIN USERs ON (concepts.user_id=users.user_id)
+       LEFT JOIN likes ON (likes.concept_id=concepts.concept_id)
+       WHERE concepts.concept_id=${req.params.concept_id}
+       GROUP BY concepts.concept_id, users.username, users.user_id;`
+    )
+    .then(data => {
+      console.log(data);
+      res.json(data);
+    })
+    .catch(error => {
+      res.json(error);
+    });
+}
+
+function isFavorite(req, res, next) {
+   db.any(
+      `SELECT *
+          FROM likes
+          WHERE user_id=${req.user.user_id}
+          AND concept_id=${req.params.concept_id};`
+    )
+    .then(data => {
+      res.json(data);
+    })
+    .catch(error => {
+      res.json(error);
+    });
+}
+
+function getSingleConceptSkills(req, res, next) {
+  return db
+    .any(`
+      SELECT concept_skill
+      FROM concept_skills
+      WHERE concept_id=${req.params.concept_id};`)
+    .then( (data) => {
+      res.json(data);
+    })
+    .catch( (err) => {
+      console.log(err);
+    })
 }
 
 /*-------------------------------POST Request----------------------------------*/
@@ -293,6 +341,40 @@ function conceptSkills(req, res, next) {
     });
 }
 
+function favoriteConcept(req, res, next) {
+  return db
+    .none(
+      "INSERT INTO likes (concept_id, user_id, seen) VALUES (${concept_id}, ${user_id}, ${seen});",
+      {
+        concept_id: req.body.concept_id,
+        user_id: req.user.user_id,
+        seen: req.body.seen
+      }
+    )
+    .then(data => {
+      res.json("success");
+    })
+    .catch(error => {
+      res.json(error);
+    });
+}
+
+function unfavoriteConcept(req, res, next) {
+  return db
+    .none(
+      `DELETE FROM likes
+       WHERE user_id=${req.user.user_id}
+       AND concept_id=${req.body.concept_id}`
+    )
+    .then(data => {
+      res.json("success");
+    })
+    .catch(error => {
+      res.json(error);
+    });
+}
+
+
 module.exports = {
   /*-------GET Request-------*/
   logoutUser,
@@ -301,6 +383,9 @@ module.exports = {
   getSingleUser,
   getSingleUserSkills,
   getAllUserLikes,
+  getSingleConcept,
+  isFavorite,
+  getSingleConceptSkills,
   /*-------POST Request-------*/
   loginUser,
   registerUser,
@@ -308,5 +393,7 @@ module.exports = {
   addPoints,
   createConcept,
   conceptSkills,
+  favoriteConcept,
+  unfavoriteConcept,
   /*-------PATCH Request-------*/
 }

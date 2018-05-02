@@ -1,0 +1,164 @@
+body {
+  font-family: "Open Sans", sans-serif;
+}
+
+.singleRecipeImage {
+  width: 100%;;
+  height: 30%;
+}
+
+.singleRecipeHeader {
+  color: rgb(51, 51, 51);
+  display: inline;
+}
+
+.recipeBox:hover {
+    transform: scale(1.02, 1.02)
+}
+
+.singleRecipeLeft {
+  width: 70%;
+  margin-left: 16%;
+  margin-top: -2%;
+  border-radius: 1%;
+}
+
+.singleRecipeVeganIcon {
+  width: 2.5%;
+}
+
+.singleRecipeChefIcon {
+  width: 5.5%;
+}
+
+.singleRecipeIntroLine {
+  background-color: rgb(241, 224, 255);
+  width: 80%;
+  margin-left: 10%;
+  border-radius: 3px;
+  color: rgb(51, 51, 51);
+  text-align: center;
+  margin-top: 20px;
+  padding-bottom: 8px;
+}
+
+.singleRecipeIngredientsTitle {
+  border-bottom: 2px solid rgb(255, 201, 130);
+}
+
+.singleRecipeUsername {
+  display: inline;
+}
+
+.singleRecipeUsernameLink {
+  text-decoration: none;
+  color: rgb(51, 51, 51);
+}
+
+.heartIconFavorite {
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+  width: 15%;
+  margin-top: -6%;
+}
+
+.heartIconUnfavorite {
+  width: 15%;
+  margin-top: -6%;
+}
+
+.heartIconFavorite:hover {
+  cursor: pointer;
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+}
+
+.favorites_count {
+
+}
+
+
+.heartIconUnfavorite:hover {
+  cursor: pointer;
+}
+
+.recipeFavoritesCount {
+  display: inline;
+  margin-top: -10%;
+}
+
+.ingredientList {
+  display: list-item;
+  list-style-type: circle;
+}
+
+textarea {
+  outline: none;
+  resize: none;
+  width: 99%;
+  border-radius: 3px;
+  border: 0.7px solid rgb(187, 187, 187);
+}
+
+.singleRecipeButtons{
+  display: flex;
+  flex-direction:column;
+  align-items: center;
+  padding: 5px;
+}
+
+.singleRecipeSubmit {
+  background-color: rgb(255, 125, 65);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  outline: none;
+  margin: 5px;
+}
+
+.singleRecipeContainer {
+  display: flex;
+  justify-content: center;
+  padding-top: 100px;
+}
+
+.singleRecipeCommentEdit {
+  background-color: rgb(255, 125, 65);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  width: 20%;
+  outline: none;
+}
+
+.singleRecipeSubmit:hover {
+  background-color: gray;
+  cursor: pointer;
+}
+
+.commentList {
+  list-style: none;
+  padding-left: 3%;
+}
+
+.singleRecipePageBox {
+  width: 40% !important;
+  margin-top: 60px;
+}
+
+.singleRecipePageBox:hover {
+  transform: scale(1.0, 1.0) !important;
+}
+
+@media only screen and (max-width: 1220px) {
+  .singleRecipePageBox {
+    width: 400px !important;
+    margin-top: 60px;
+  }
+}
+
+.concept_likes {
+  display: flex;
+  justify-content: space-between;
+  width: 15%;
+}

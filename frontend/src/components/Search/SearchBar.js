@@ -156,7 +156,7 @@ console.log("this searchbar: ", this.props.user.user_id);
         </Link>
         <div className="menuicons">
           <div className="tooltip1">
-            <Link to={`/cl/${35}/${7}`} className="searchLink">
+            <Link to={`/`} className="searchLink">
               <span className="tooltiptext1"> Concept </span>
             </Link>
           </div>
