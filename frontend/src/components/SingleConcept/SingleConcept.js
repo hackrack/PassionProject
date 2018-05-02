@@ -3,30 +3,24 @@ import { Link } from "react-router-dom";
 import { Redirect } from "react-router"
 import axios from "axios";
 import Searchbar from "../Search/SearchBar";
-// import "./Recipe.css";
+import "./Concept.css";
 
 
 class SingleConcept extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      favorites_count: "",
+      likes_count: "",
       username: "",
       user_id: "",
-      recipe_name: "",
-      recipe: "",
+      concept_name: "",
+      description: "",
       img: "",
-      isvegeterian: "",
-      isvegan: "",
-      comments: "",
-      ingredients: [],
-      canFavorite: true,
+      comments: [],
+      skills: [],
+      is_favorite: true,
       comment: "",
       comments_id: false,
-      fork: "",
-      forkedFrom: "",
-      forked: false,
-      forkList: [],
       seenCommentsArray: [],
     };
   }
@@ -46,21 +40,19 @@ class SingleConcept extends React.Component {
   }
 
   loadsRecipe = () => {
-    const { username, forkedFrom, forkList } = this.state
+    const { username } = this.state
     axios
-      .get(`/users/singlerecipe/${this.props.user.recipeID}`)
+      .get(`/users/singleconcept/${this.props.user.concept_id}`)
       .then(res => {
         this.setState({
           favorites_count: res.data[0].favorites_count,
           username: res.data[0].username,
           user_id: res.data[0].user_id,
-          recipe_name: res.data[0].recipe_name,
-          recipe: res.data[0].recipe,
-          img: res.data[0].img,
-          isvegeterian: res.data[0].isvegeterian,
-          isvegan: res.data[0].isvegan,
-          fork: res.data[0].fork,
-          forkedFrom: res.data[0].forkedfrom
+          concept_name: res.data[0].concept_name,
+          description: res.data[0].description,
+          location: res.data[0].location,
+          is_remote: res.data[0].is_remote,
+          concept_timestamp: res.data[0].concept_timestamp
         });
       })
       .then(() => {
@@ -76,36 +68,36 @@ class SingleConcept extends React.Component {
       })
       .then( () => {
         axios
-          .get(`/users/isfavorite/${this.props.user.recipeID}`)
+          .get(`/users/isfavorite/${this.props.user.concept_id}`)
           .then(res => {
             if (res.data.length === 0) {
               this.setState({
-                canFavorite: false
+                is_favorite: false
               });
             } else {
               this.setState({
-                canFavorite: true
+                is_favorite: true
               });
             }
           })
       })
       .then(() => {
         axios
-        .get(`/users/getingredients/${this.props.user.recipeID}`)
+        .get(`/users/conceptskills/${this.props.user.concept_id}`)
         .then(res => {
           this.setState({
-            ingredients: res.data
+            skills: res.data
           });
         })
       })
       .then((user) => {
         axios
-        .get(`/users/comment/${this.props.user.recipeID}`)
-        .then(res => {
-          this.setState({
-            comments: res.data
-          });
-        })
+          .get(`/users/comment/${this.props.user.comments_id}`)
+          .then(res => {
+            this.setState({
+              comments: res.data
+            });
+          })
       })
       .then( () => {
           axios
@@ -116,15 +108,6 @@ class SingleConcept extends React.Component {
               })
             })
       })
-      .then(() => {
-        axios
-          .get(`/users/getforkedrecipes/${this.props.user.recipeID}`)
-          .then(res => {
-            this.setState({
-              forkList: res.data
-            })
-          })
-      })
       .catch(error => {
         console.log("error in Recipe componentDidMount: ", error);
       });
@@ -133,20 +116,20 @@ class SingleConcept extends React.Component {
 
   handleClickLike = e => {
     e.preventDefault();
-    const { username, forkedFrom, forkList } = this.state
+    const { username } = this.state
     axios
       .post("/users/favorite", {
-        recipe_id: this.props.user.recipeID,
+        concept_id: this.props.user.concept_id,
         seen: false
       })
       .then(() => {
         this.setState({
-          canFavorite: true
+          is_favorite: true
         });
       })
       .then(() =>
         axios
-          .get(`/users/singlerecipe/${this.props.user.recipeID}`)
+          .get(`/users/singleconcept/${this.props.user.concept_id}`)
           .then(res => {
             this.setState({
               favorites_count: res.data[0].favorites_count
@@ -163,16 +146,16 @@ class SingleConcept extends React.Component {
 
     axios
       .post(`/users/unfavorite`, {
-        recipe_id: this.props.user.recipeID
+        concept_id: this.props.user.concept_id
       })
       .then(() => {
         this.setState({
-          canFavorite: false
+          is_favorite: false
         });
       })
       .then(() =>
         axios
-          .get(`/users/singlerecipe/${this.props.user.recipeID}`)
+          .get(`/users/singleconcept/${this.props.user.concept_id}`)
           .then(res => {
             this.setState({
               favorites_count: res.data[0].favorites_count
@@ -324,53 +307,6 @@ class SingleConcept extends React.Component {
       })
   }
 
-  handleSubmitFork = (e) => {
-    e.preventDefault();
-    const { recipe_name,
-            recipe,
-            description,
-            ingredients,
-            ingredientsList,
-            isvegeterian,
-            isvegan,
-            img,
-            recipe_id,
-            fork,
-            username,
-            forkedFrom } = this.state
-    axios
-      .post('/users/addRecipe', {
-        recipe_name: recipe_name,
-        description: description,
-        recipe: recipe,
-        img: img,
-        isvegeterian: isvegeterian,
-        isvegan: isvegan,
-        fork: fork,
-        forkedFrom: username,
-        forkedID: this.props.user.recipeID
-      })
-      .then(res => {
-        this.setState({
-          recipe_id: res.data.recipe_id
-        })
-        axios
-          .post(`/users/addIngredients/${res.data.recipe_id}`, {
-            ingredients: ingredients
-          })
-      })
-      .then( () => {
-        this.setState({
-          forked: true
-        })
-      })
-      .catch(err => {
-        this.setState({
-          message: "Error posting new image"
-        })
-      })
-  }
-
 
   render() {
 
@@ -378,21 +314,19 @@ class SingleConcept extends React.Component {
       favorites_count,
       username,
       user_id,
-      recipe_name,
-      recipe,
-      img,
-      isvegeterian,
-      isvegan,
+      concept_name,
+      description,
       ingredients,
       comments,
-      canFavorite,
+      is_favorite,
       comment,
-      fork,
-      forked,
-      forkedFrom,
-      forkList
+      is_remote,
+      location,
+      concept_timestamp,
+      skills
     } = this.state;
-    console.log("CONCEPT FUNCTION: ", this.props.user.user_id);
+    let ts = new Date(concept_timestamp);
+    let timestamp = ts.toDateString(ts);
     if (this.props.user) {
       return (
         <div>
@@ -400,14 +334,32 @@ class SingleConcept extends React.Component {
           <div className="singleRecipeContainer">
           <div className="recipeBox singleRecipePageBox">
             <div className="singleRecipeIntroLine">
-              <h1 className="singleRecipeHeader"> {recipe_name} </h1>
+              <h1 className="singleRecipeHeader"> {concept_name}</h1>
+              <p>{description}</p>
+              <p>{location}</p>
+              <p>{is_remote?"remotely app":"no remote"}</p>
+              <p>uploaded {timestamp}</p>
               <p className="recipeFavoritesCount">
                 {" "}
-                {this.state.favorites_count}
+                {!is_favorite? (
+                <img
+                  onClick={this.handleClickLike}
+                  src="https://cdn0.iconfinder.com/data/icons/colourful-education/250/bulb-512.png"
+                  title="Favorite"
+                  className="heartIconFavorite"
+                />
+              ) : (
+                <img
+                  onClick={this.handleClickDisLike}
+                  src="https://cdn0.iconfinder.com/data/icons/colourful-education/250/bulb-512.png"
+                  className="heartIconUnfavorite"
+                />
+              )}
+              <label className="favorites_count">{favorites_count}</label>
               </p>
               <div>
               <Link to={`/cl/profile/${this.props.user.user_id}`} className="singleRecipeUsernameLink">
-              <img className="singleRecipeChefIcon" src="https://cdn0.iconfinder.com/data/icons/kitchen-and-cooking/512/salting_cooking_hand_sprinkle_salt_flat_design_icon-256.png" />
+              <img className="singleRecipeChefIcon" src="https://openclipart.org/download/247324/abstract-user-flat-1.svg" />
                 <h3 className="singleRecipeUsername"> {username} </h3>{" "}
               </Link>
               </div>
@@ -421,9 +373,6 @@ class SingleConcept extends React.Component {
                 { this.props.id === user_id?
                   <Link to={`/cb/feed`}><button id="delete_recipe" className="singleRecipeSubmit" onClick={this.handleClickDelete}>Delete Recipe</button></Link>: ""
                 }
-                { this.props.id !== user_id? (fork?
-                  <button className="singleRecipeSubmit" onClick={this.handleSubmitFork}>Fork</button>
-                : ""): ""}
                 </div>
                 <div>
                 </div>
@@ -431,18 +380,16 @@ class SingleConcept extends React.Component {
             </div>
 
             <div className="singleRecipeLeft">
-              <h3 className="singleRecipeIngredientsTitle"> Ingredients </h3>
+              <h3 className="singleRecipeIngredientsTitle"> Wanted Skills </h3>
               <ul type="none">
-                {ingredients? ingredients.map(ingredient => (
+                {skills? skills.map(skill => (
                       <li className="ingredientList" key={Math.random()}>
-                        {ingredient.amount} {ingredient.name}
+                        {skill.concept_skill}
                       </li>
-                    ))
-                  :"There are no any ingredients"}
+                    )):""}
               </ul>
 
               <h3 className="singleRecipeIngredientsTitle">Directions</h3>
-              <p> {recipe}</p>
               <h3 className="singleRecipeIngredientsTitle">
                 {" "}
                 Leave a comment{" "}
