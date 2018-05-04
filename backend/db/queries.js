@@ -50,7 +50,6 @@ function getUser(req, res, next) {
 }
 
 function getSingleUserSkills(req, res, next) {
-  console.log("getSingleUserSkills");
   db
     .any(
       `SELECT user_skill
@@ -67,7 +66,6 @@ function getSingleUserSkills(req, res, next) {
 }
 
 function getSingleUser(req, res, next) {
-  console.log("get sibgle user");
   db
   .any(
     `SELECT user_id, username, email, fullname, user_img, travel_coverage, location
@@ -114,7 +112,6 @@ function getSingleConcept(req, res, next) {
        GROUP BY concepts.concept_id, users.username, users.user_id;`
     )
     .then(data => {
-      console.log(data);
       res.json(data);
     })
     .catch(error => {
@@ -140,7 +137,7 @@ function isFavorite(req, res, next) {
 function getSingleConceptSkills(req, res, next) {
   return db
     .any(`
-      SELECT concept_skill
+      SELECT *
       FROM concept_skills
       WHERE concept_id=${req.params.concept_id};`)
     .then( (data) => {
@@ -151,13 +148,42 @@ function getSingleConceptSkills(req, res, next) {
     })
 }
 
+function getConceptComments(req, res, next) {
+  db
+    .any(
+      `SELECT comment, username, users.user_id, comment_id,fullname
+       FROM users
+       INNER JOIN comments ON(users.user_id=comments.user_id)
+       INNER JOIN concepts ON(concepts.concept_id=comments.concept_id)
+       WHERE concepts.concept_id=$1
+       ORDER BY comment_timestamp DESC;`,
+      [req.params.concept_id]
+    )
+    .then(data => {
+      res.json(data);
+    })
+    .catch(error => {
+      res.json(error);
+    });
+}
+
+function getSingleComment(req, res, next) {
+  db
+    .any(`SELECT * FROM comments WHERE comment_id=${req.params.comment_id};`)
+    .then(data => {
+      res.json(data);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+}
+
 /*-------------------------------POST Request----------------------------------*/
 function registerUser(req, res, next) {
   return authHelpers
     .createUser(req)
     .then(response => {
       passport.authenticate("local", (err, user, info) => {
-        console.log("user", user);
         if (user) {
           res.status(200).json({
             status: "success",
@@ -280,7 +306,6 @@ function addSkills(req, res, next) {
 function loginUser(req, res, next) {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
-      console.log(err);
       res.status(500).send("error while trying to log in");
     } else if (!user) {
       res.status(401).send("invalid username/password");
@@ -375,6 +400,168 @@ function unfavoriteConcept(req, res, next) {
 }
 
 
+function addConceptComment(req, res, next) {
+  return db
+    .none(
+      "INSERT INTO comments (concept_id, user_id, comment, seen) VALUES (${concept_id}, ${user_id}, ${comment}, ${seen})",
+      {
+        concept_id: req.body.concept_id,
+        user_id: req.user.user_id,
+        comment: req.body.comment,
+        seen: req.body.seen
+      }
+    )
+    .then(data => {
+      res.json("success");
+    })
+    .catch(error => {
+      res.json(error);
+    });
+}
+
+/*-------------------------------PATCH Request----------------------------------*/
+
+
+function editConceptComment(req, res, next) {
+  if (req.body.comment.length === 0) {
+    return db
+      .none(`DELETE FROM comments WHERE comment_id=${req.params.comment_id}`)
+      .then(data => {
+        res.json("deleted");
+      })
+      .catch(error => {
+        res.json(error);
+      });
+  } else {
+    return db
+      .none(
+        `UPDATE comments
+         SET concept_id=$1, user_id=$2, comment=$3, comment_timestamp=$4
+         WHERE comment_id=${req.params.comment_id};`,
+        [req.body.concept_id, req.user.user_id, req.body.comment, new Date()]
+      )
+      .then(data => {
+        res.json("success");
+      })
+      .catch(error => {
+        res.json(error);
+      });
+  }
+}
+
+function deleteConceptSkills(req, res, next) {
+  return db
+    .none("DELETE FROM concept_skills WHERE concept_id=$1", [req.body.concept_id])
+    .then(data => {
+      res.json("deleted");
+    })
+    .catch(err => {
+      res.json(err);
+    });
+}
+
+function deleteComments(req, res, next) {
+  return db
+    .none("DELETE FROM comments WHERE concept_id=$1", [req.body.concept_id])
+    .then(data => {
+      res.json("deleted");
+    })
+    .catch(err => {
+      res.json(err);
+    });
+}
+
+function deleteLikes(req, res, next) {
+  return db
+    .none("DELETE FROM likes WHERE concept_id=$1", [req.body.concept_id])
+    .then(data => {
+      res.json("deleted");
+    })
+    .catch(err => {
+      res.json(err);
+    });
+}
+
+function deleteConcept(req, res, next) {
+  return db
+    .none("DELETE FROM concepts WHERE concept_id=$1", [req.body.concept_id])
+    .then(data => {
+      res.json("deleted");
+    })
+    .catch(err => {
+      res.json(err);
+    });
+}
+
+function editConcept(req, res, next) {
+  return db
+    .none(
+      `UPDATE concepts
+       SET concept_name=$1, description=$2, is_remote=$3, location=$4
+       WHERE concept_id=${req.params.concept_id};`,
+      [
+        req.body.concept_name,
+        req.body.description,
+        req.body.is_remote,
+        req.body.location
+      ]
+    )
+    .then(data => {
+      res.json("success");
+    })
+    .catch(error => {
+      res.json(error);
+    });
+}
+
+function editConceptSkills(req, res, next) {
+  const skills = req.body.skills;
+  console.log("skilssss====>>>>>: ", skills);
+  return db
+    .task(t => {
+      const deleteAll = skills.map( skill => {
+        return t.any(
+          `DELETE FROM concept_skills
+           WHERE concept_id=${skill.concept_id}`
+        )
+      })
+
+      // const skillsWithId = skills.filter(
+      //   skill => skill.concept_skill_id
+      // );
+      // const update = skills.map(skill => {
+      //   return t.any(
+      //     `UPDATE concept_skills
+      //      SET concept_skill=$1
+      //      WHERE concept_skill_id=${skill.concept_skill_id};`,
+      //     [skill.concept_skill]
+      //   );
+      // });
+      const skillsWithoutId = skills.filter(
+        skill => !skill.concept_skill_id || skill.concept_skill_id
+      );
+      const insert = skills.map(skill => {
+        return t.none(
+          "INSERT INTO concept_skills (concept_id, concept_skill) " +
+          "VALUES (${concept_id}, ${concept_skill})",
+          {
+            concept_id: req.params.concept_id,
+            concept_skill: skill.concept_skill
+          }
+        );
+      });
+      return t.batch(skillsWithoutId);
+    })
+    .then(data => {
+      res.json("success");
+    })
+    .catch(error => {
+      res.json(error);
+    });
+}
+
+
+
 module.exports = {
   /*-------GET Request-------*/
   logoutUser,
@@ -386,6 +573,8 @@ module.exports = {
   getSingleConcept,
   isFavorite,
   getSingleConceptSkills,
+  getConceptComments,
+  getSingleComment,
   /*-------POST Request-------*/
   loginUser,
   registerUser,
@@ -395,5 +584,13 @@ module.exports = {
   conceptSkills,
   favoriteConcept,
   unfavoriteConcept,
+  addConceptComment,
   /*-------PATCH Request-------*/
+  editConceptComment,
+  deleteConceptSkills,
+  deleteComments,
+  deleteLikes,
+  deleteConcept,
+  editConcept,
+  editConceptSkills,
 }
