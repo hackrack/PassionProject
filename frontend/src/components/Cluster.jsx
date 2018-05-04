@@ -6,6 +6,7 @@ import Register from "./Register/Register"
 import Profile from "./Profile/Profile";
 import CreateConcept from './SingleConcept/CreateConcept';
 import Concept from './SingleConcept/SingleConcept';
+import EditConcept from './SingleConcept/EditConcept';
 
 class Cluster extends React.Component {
   constructor() {
@@ -52,11 +53,16 @@ class Cluster extends React.Component {
   renderSingleConcept = props => {
     const { user_id, concept_id } = props.match.params
     const { user } = this.state
-    console.log("renderSingleRecipe:user_id ", user_id);
-    console.log("renderSingleRecipe:concept_id ", user);
     return <Concept id={user.user_id} user={props.match.params}  userinfo={user} />
   }
 
+  // renderEditConcept = () => {
+  //   console.log("renderEditConcept");
+  //   return <EditConcept/>
+  // }
+rendertest = () => {
+  return(<h1>rendered test</h1>)
+}
   render() {
     return (
      <div>
@@ -65,6 +71,7 @@ class Cluster extends React.Component {
          <Route path="/cl/profile/:user_id" render={this.renderUserProfile} />
          <Route path='/cl/createconcept' render={this.renderCreateConcept} />
          <Route exact path='/cl/:user_id/:concept_id' render={this.renderSingleConcept} />
+         <Route path='/cl/:concept_id' component={EditConcept} />
        </Switch>
      </div>
    )

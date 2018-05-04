@@ -148,7 +148,6 @@ class Searchbar extends Component {
       onChange: this.onChange,
       onKeyPress: this.onKeyPress
     };
-console.log("this searchbar: ", this.props.user.user_id);
     return (
       <div className="searchbar">
         <Link to={`/cl/feed`}>
