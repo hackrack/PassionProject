@@ -92,7 +92,7 @@ class SingleConcept extends React.Component {
       })
       .then((user) => {
         axios
-          .get(`/users/comment/${this.props.user.comments_id}`)
+          .get(`/users/comment/${this.props.user.concept_id}`)
           .then(res => {
             this.setState({
               comments: res.data
@@ -143,7 +143,6 @@ class SingleConcept extends React.Component {
 
   handleClickDisLike = e => {
     e.preventDefault();
-
     axios
       .post(`/users/unfavorite`, {
         concept_id: this.props.user.concept_id
@@ -175,15 +174,15 @@ class SingleConcept extends React.Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    if (this.state.comments_id) {
+    if (this.state.comment_id) {
       axios
-        .patch(`/users/editComment/${this.state.comments_id}`, {
-          recipe_id: this.props.user.recipeID,
+        .patch(`/users/editComment/${this.state.comment_id}`, {
+          concept_id: this.props.user.concept_id,
           comment: this.state.comment
         })
         .then(res => {
           axios
-            .get(`/users/comment/${this.props.user.recipeID}`)
+            .get(`/users/comment/${this.props.user.concept_id}`)
             .then(res => {
               this.setState({
                 comments: res.data,
@@ -205,13 +204,13 @@ class SingleConcept extends React.Component {
       if (this.props.id === this.state.user_id) {
         axios
           .post("/users/addComment", {
-            recipe_id: this.props.user.recipeID,
+            concept_id: this.props.user.concept_id,
             comment: this.state.comment,
             seen: true
           })
           .then(res => {
             axios
-              .get(`/users/comment/${this.props.user.recipeID}`)
+              .get(`/users/comment/${this.props.user.concept_id}`)
               .then(res => {
                 this.setState({
                   comments: res.data,
@@ -228,13 +227,13 @@ class SingleConcept extends React.Component {
       } else {
         axios
           .post("/users/addComment", {
-            recipe_id: this.props.user.recipeID,
+            concept_id: this.props.user.concept_id,
             comment: this.state.comment,
             seen: false
           })
           .then(res => {
             axios
-              .get(`/users/comment/${this.props.user.recipeID}`)
+              .get(`/users/comment/${this.props.user.concept_id}`)
               .then(res => {
                 this.setState({
                   comments: res.data,
@@ -258,7 +257,7 @@ class SingleConcept extends React.Component {
       .then(res => {
         this.setState({
           comment: res.data[0].comment,
-          comments_id: res.data[0].comments_id
+          comment_id: res.data[0].comment_id
         });
       })
       .catch(err => {
@@ -266,29 +265,29 @@ class SingleConcept extends React.Component {
       });
   };
 
-  handleClickEditRecipe = (e) => {
-    <Redirect push to="/cb/editRecipe/:recipeID" />
+  handleClickEditConcept = (e) => {
+    <Redirect push to="/cl/editConcept/:concept_id" />
   }
 
   handleClickDelete = (e) => {
     axios
-      .patch(`/users/deleteIngredients`, {
-        recipe_id: this.props.user.recipeID
+      .patch(`/users/deleteConceptSkills`, {
+        concept_id: this.props.user.concept_id
       })
       .then( (res) => {
         axios
           .patch(`/users/deleteComments`, {
-            recipe_id: this.props.user.recipeID
+            concept_id: this.props.user.concept_id
           })
           .then( (res) => {
             axios
-              .patch(`/users/deleteFavorites`, {
-                recipe_id: this.props.user.recipeID
+              .patch(`/users/deleteLikes`, {
+                concept_id: this.props.user.concept_id
               })
               .then( (res) => {
                 axios
-                  .patch(`/users/deleteRecipe`, {
-                    recipe_id: this.props.user.recipeID
+                  .patch(`/users/deleteConcept`, {
+                    concept_id: this.props.user.concept_id
                   })
                   .catch( (err) => {
                     console.log(err);
@@ -325,6 +324,7 @@ class SingleConcept extends React.Component {
       concept_timestamp,
       skills
     } = this.state;
+    console.log("concept_id: ", this.props.user.concept_id);
     let ts = new Date(concept_timestamp);
     let timestamp = ts.toDateString(ts);
     if (this.props.user) {
@@ -368,10 +368,10 @@ class SingleConcept extends React.Component {
                 <div class="mainButtons">
                 <br/>
                 { this.props.id === user_id?
-                  <Link to={`/cb/editRecipe/${this.props.user.recipeID}`}><button id="edit_recipe" className="singleRecipeSubmit">Edit Recipe</button></Link>: ""
+                    <Link to={`/cl/${this.props.user.concept_id}`}><button id="edit_recipe" className="singleRecipeSubmit">Edit Recipe</button></Link>: ""
                 }{" "}
                 { this.props.id === user_id?
-                  <Link to={`/cb/feed`}><button id="delete_recipe" className="singleRecipeSubmit" onClick={this.handleClickDelete}>Delete Recipe</button></Link>: ""
+                  <Link to={`/cl/feed`}><button id="delete_recipe" className="singleRecipeSubmit" onClick={this.handleClickDelete}>Delete Recipe</button></Link>: ""
                 }
                 </div>
                 <div>
@@ -388,8 +388,6 @@ class SingleConcept extends React.Component {
                       </li>
                     )):""}
               </ul>
-
-              <h3 className="singleRecipeIngredientsTitle">Directions</h3>
               <h3 className="singleRecipeIngredientsTitle">
                 {" "}
                 Leave a comment{" "}
@@ -406,8 +404,7 @@ class SingleConcept extends React.Component {
 
               <h3 className="singleRecipeIngredientsTitle"> Comments </h3>
               <ul className="commentList" type="none">
-                {comments
-                  ? comments.map(comment => (
+                {comments? comments.map(comment => (
                       <p key={Math.random()}>
                         <strong>
                           {comment.username}
@@ -415,7 +412,7 @@ class SingleConcept extends React.Component {
                         {": "}
                         {comment.comment}{" "}
                         {comment.user_id === this.props.id ? (
-                        <button onClick={this.handleClickEdit} id={comment.comments_id} className="singleRecipeCommentEdit">
+                        <button onClick={this.handleClickEdit} id={comment.comment_id} className="singleRecipeCommentEdit">
                           Edit/Delete
                         </button>)
                         :
