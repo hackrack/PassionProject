@@ -55,7 +55,6 @@ class Home extends React.Component {
     if (this.state.register === true) {
       return <Redirect to='/cl/register' />
     }
-    console.log(concepts);
     return (
       <div className="home_div">
         <p>got idea and you want to implement it? make your team, to make your dream</p>

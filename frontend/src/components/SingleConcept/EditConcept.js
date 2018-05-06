@@ -92,7 +92,6 @@ class EditConcept extends React.Component {
     e.preventDefault();
     const { concept_name, description, is_remote,
             location, skills } = this.state;
-            console.log("skilsssss=====>>>>>>>>: ", skills);
 
     axios
       .patch(`/users/editconcept/${this.props.match.params.concept_id}`, {
@@ -116,7 +115,6 @@ class EditConcept extends React.Component {
         })
       })
       .then( (res) => {
-        console.log("inside props.history");
         this.props.history.push(`/cl/${this.state.user_id}/${this.props.match.params.concept_id}`)
         window.location.reload();
       })
