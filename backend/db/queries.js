@@ -84,12 +84,15 @@ function getSingleUser(req, res, next) {
 function getAllUserLikes(req, res, next) {
   return db
     .any(
-      `SELECT *
+      `SELECT concepts.*,
+       COUNT(likes.concept_id) AS bulbs
        FROM concepts
-       WHERE concept_id IN (
-       SELECT concept_id
+       INNER JOIN likes ON (concepts.concept_id=likes.concept_id)
+       WHERE concepts.concept_id
+       IN (SELECT concept_id
        FROM likes
-       WHERE user_id=$1)`,
+       WHERE user_id=$1)
+       GROUP BY concepts.concept_id`,
        [req.params.user_id]
      )
      .then(data => {
@@ -103,7 +106,7 @@ function getAllUserLikes(req, res, next) {
 function getSingleConcept(req, res, next) {
   return db.any(
       `SELECT COUNT(likes.concept_id) AS
-       favorites_count, USERname, users.user_id, concept_name,
+       bulbs, USERname, users.user_id, concept_name,
        description, concepts.location, is_remote,concept_timestamp
        FROM concepts
        LEFT JOIN USERs ON (concepts.user_id=users.user_id)
@@ -175,6 +178,62 @@ function getSingleComment(req, res, next) {
     })
     .catch(err => {
       res.json(err);
+    });
+}
+
+function getSeenForCommentsByUserId(req, res, next) {
+  db
+    .any(
+      `SELECT seen, users.username, concepts.concept_id, concepts.concept_name, comment_id
+          FROM comments
+          INNER JOIN concepts ON(comments.concept_id=concepts.concept_id)
+          INNER JOIN users ON(comments.user_id=users.user_id)
+          WHERE seen=FALSE
+          AND concepts.user_id=${req.params.user_id};`
+    )
+    .then(data => {
+      res.json(data);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}
+
+
+function getSeenForLikesByUserId(req, res, next) {
+  db
+    .any(
+      `SELECT seen, users.username, concepts.concept_id, concepts.concept_name
+       FROM likes
+       INNER JOIN concepts ON(likes.concept_id=concepts.concept_id)
+       INNER JOIN users ON(likes.user_id=users.user_id)
+       WHERE seen=FALSE
+       AND concepts.user_id=${req.params.user_id};`
+    )
+    .then(data => {
+      res.json(data);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}
+
+function getUserConcept(req, res, next) {
+  db
+    .any(
+      `SELECT concepts.*,
+       COUNT(likes.concept_id) AS bulbs
+       FROM concepts
+       LEFT JOIN likes ON (concepts.concept_id=likes.concept_id)
+       WHERE concepts.concept_id
+       IN (SELECT concept_id FROM concepts WHERE user_id=${req.params.user_id})
+       GROUP BY concepts.concept_id`
+    )
+    .then(data => {
+      res.json(data);
+    })
+    .catch(err => {
+      console.log(err);
     });
 }
 
@@ -560,6 +619,40 @@ function editConceptSkills(req, res, next) {
     });
 }
 
+function seenCommentsChangeByConceptId(req, res, next) {
+  return db
+    .none(
+      `UPDATE comments
+       SET seen=TRUE
+       WHERE concept_id=${req.params.concept_id};`
+    )
+    .then(data => {
+      res.json("success");
+    })
+    .catch(error => {
+      res.json(error);
+    });
+}
+
+function seenLikesChangeByUserId(req, res, next) {
+  return db
+    .none(
+      `UPDATE likes
+       SET seen=TRUE
+       WHERE likes.concept_id
+       IN(SELECT likes.concept_id
+       FROM likes
+       INNER JOIN concepts ON(concepts.concept_id=likes.concept_id)
+       WHERE concepts.user_id=${req.params.user_id});`
+    )
+    .then(data => {
+      res.json("success");
+    })
+    .catch(error => {
+      res.json(error);
+    });
+}
+
 
 
 module.exports = {
@@ -575,6 +668,9 @@ module.exports = {
   getSingleConceptSkills,
   getConceptComments,
   getSingleComment,
+  getSeenForCommentsByUserId,
+  getSeenForLikesByUserId,
+  getUserConcept,
   /*-------POST Request-------*/
   loginUser,
   registerUser,
@@ -593,4 +689,6 @@ module.exports = {
   deleteConcept,
   editConcept,
   editConceptSkills,
+  seenCommentsChangeByConceptId,
+  seenLikesChangeByUserId,
 }

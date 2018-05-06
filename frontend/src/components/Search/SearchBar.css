@@ -42,6 +42,31 @@
   margin-top: 2%;
 }
 
+.alert {
+  -webkit-animation: notification_alert 1s infinite;
+  -moz-animation: notification_alert 1s infinite;
+  -o-animation: notification_alert 1s infinite;
+  animation: notification_alert 1s infinite;
+  margin-bottom: 0;
+  padding: 0;
+  width: 35px;
+  margin-top: 2.5%;
+}
+
+@-webkit-keyframes notification_alert {
+  0%, 60% {
+    -webkit-filter: grayscale(100000%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100000%);
+  }
+  50%, 100% {
+
+  }
+}
+
+
+
+
+
 .searchbar {
   position: fixed;
   width: 100%;
@@ -204,7 +229,7 @@
   z-index: 1;
   margin-left: 10%;
   margin-top: 18%;
-  
+
 }
 
 .tooltip2:hover .tooltiptext2 {

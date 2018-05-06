@@ -26,10 +26,19 @@ class Profile extends React.Component {
       })
       .then( () => {
         axios
+          .get(`/users/userconcept/${this.props.id}`)
+          .then( (res) => {
+            this.setState({
+              concepts: res.data
+            })
+          })
+      })
+      .then( () => {
+        axios
           .get(`/users/userlikes/${this.props.id}`)
           .then( (res)=> {
             this.setState({
-              concepts: res.data
+              concepts: [...this.state.concepts, ...res.data]
             })
           })
       })
@@ -65,7 +74,6 @@ class Profile extends React.Component {
   render() {
     const { username, email, fullname,
             travel_coverage, location, user_id, skills} = this.props.user;
-
     if (this.state.user && this.props.user) {
       return(
         <div>

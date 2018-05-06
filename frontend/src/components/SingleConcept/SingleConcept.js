@@ -45,7 +45,7 @@ class SingleConcept extends React.Component {
       .get(`/users/singleconcept/${this.props.user.concept_id}`)
       .then(res => {
         this.setState({
-          favorites_count: res.data[0].favorites_count,
+          bulbs: res.data[0].bulbs,
           username: res.data[0].username,
           user_id: res.data[0].user_id,
           concept_name: res.data[0].concept_name,
@@ -58,7 +58,7 @@ class SingleConcept extends React.Component {
       .then(() => {
         if (this.props.id === this.state.user_id) {
           axios
-            .patch(`/users/seenCommentsChangeByRecipeId/${this.props.user.recipeID}`)
+            .patch(`/users/seenCommentsChangeByConceptId/${this.props.user.recipeID}`)
             .then( () => {
               this.setState({
                 seenCommentsArray: true
@@ -117,28 +117,30 @@ class SingleConcept extends React.Component {
   handleClickLike = e => {
     e.preventDefault();
     const { username } = this.state
-    axios
-      .post("/users/favorite", {
-        concept_id: this.props.user.concept_id,
-        seen: false
-      })
-      .then(() => {
-        this.setState({
-          is_favorite: true
+    if (this.props.id !== this.state.user_id) {
+      axios
+        .post("/users/favorite", {
+          concept_id: this.props.user.concept_id,
+          seen: false
+        })
+        .then(() => {
+          this.setState({
+            is_favorite: true
+          });
+        })
+        .then(() =>
+          axios
+            .get(`/users/singleconcept/${this.props.user.concept_id}`)
+            .then(res => {
+              this.setState({
+                bulbs: res.data[0].bulbs
+              });
+            })
+        )
+        .catch(err => {
+          console.log(err);
         });
-      })
-      .then(() =>
-        axios
-          .get(`/users/singleconcept/${this.props.user.concept_id}`)
-          .then(res => {
-            this.setState({
-              favorites_count: res.data[0].favorites_count
-            });
-          })
-      )
-      .catch(err => {
-        console.log(err);
-      });
+    }
   };
 
   handleClickDisLike = e => {
@@ -157,7 +159,7 @@ class SingleConcept extends React.Component {
           .get(`/users/singleconcept/${this.props.user.concept_id}`)
           .then(res => {
             this.setState({
-              favorites_count: res.data[0].favorites_count
+              bulbs: res.data[0].bulbs
             });
           })
       )
@@ -289,6 +291,10 @@ class SingleConcept extends React.Component {
                   .patch(`/users/deleteConcept`, {
                     concept_id: this.props.user.concept_id
                   })
+                  .then( () => {
+                    <Redirect to={`/cl/profile/${this.props.id}`}/>
+                    window.location.reload();
+                  })
                   .catch( (err) => {
                     console.log(err);
                   })
@@ -310,7 +316,7 @@ class SingleConcept extends React.Component {
   render() {
 
     const {
-      favorites_count,
+      bulbs,
       username,
       user_id,
       concept_name,
@@ -322,9 +328,10 @@ class SingleConcept extends React.Component {
       is_remote,
       location,
       concept_timestamp,
-      skills
+      skills,
+      redirect,
     } = this.state;
-    console.log("concept_id: ", this.props.user.concept_id);
+
     let ts = new Date(concept_timestamp);
     let timestamp = ts.toDateString(ts);
     if (this.props.user) {
@@ -355,7 +362,7 @@ class SingleConcept extends React.Component {
                   className="heartIconUnfavorite"
                 />
               )}
-              <label className="favorites_count">{favorites_count}</label>
+              <label className="favorites_count">{bulbs}</label>
               </p>
               <div>
               <Link to={`/cl/profile/${this.props.user.user_id}`} className="singleRecipeUsernameLink">
@@ -366,16 +373,16 @@ class SingleConcept extends React.Component {
             </div>
             <div className="singleRecipeButtons">
                 <div class="mainButtons">
-                <br/>
-                { this.props.id === user_id?
-                    <Link to={`/cl/${this.props.user.concept_id}`}><button id="edit_recipe" className="singleRecipeSubmit">Edit Recipe</button></Link>: ""
-                }{" "}
-                { this.props.id === user_id?
-                  <Link to={`/cl/feed`}><button id="delete_recipe" className="singleRecipeSubmit" onClick={this.handleClickDelete}>Delete Recipe</button></Link>: ""
-                }
+                  <br/>
+                  { this.props.id === user_id?
+                    <button id="edit_recipe" className="singleRecipeSubmit">Edit Concept</button>:""
+                  }{" "}
+                  { this.props.id === user_id?
+                    <Link to={`/cl/profile/${this.props.id}`}><button id="delete_recipe" className="singleRecipeSubmit" onClick={this.handleClickDelete}>Delete Concept</button></Link>: ""
+                  }
                 </div>
-                <div>
-                </div>
+              <div>
+            </div>
 
             </div>
 

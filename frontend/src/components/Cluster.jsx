@@ -7,6 +7,7 @@ import Profile from "./Profile/Profile";
 import CreateConcept from './SingleConcept/CreateConcept';
 import Concept from './SingleConcept/SingleConcept';
 import EditConcept from './SingleConcept/EditConcept';
+import EditUser from './Profile/EditUser';
 
 class Cluster extends React.Component {
   constructor() {
@@ -56,13 +57,6 @@ class Cluster extends React.Component {
     return <Concept id={user.user_id} user={props.match.params}  userinfo={user} />
   }
 
-  // renderEditConcept = () => {
-  //   console.log("renderEditConcept");
-  //   return <EditConcept/>
-  // }
-rendertest = () => {
-  return(<h1>rendered test</h1>)
-}
   render() {
     return (
      <div>

@@ -23,7 +23,7 @@ class ConceptBox extends React.Component {
               src="https://cdn0.iconfinder.com/data/icons/colourful-education/250/bulb-512.png" alt="bulbs"
               className="concept_box_fav"
             />
-            <p className="fav">{bulbs}</p>
+          <p className="fav">{bulbs}</p>
           </div>
           <p>uploaded {timestamp}</p>
         </Link>

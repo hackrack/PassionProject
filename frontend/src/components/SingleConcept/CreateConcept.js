@@ -4,6 +4,7 @@ import axios from "axios";
 import ReactDOM from "react-dom";
 import Searchbar from "../Search/SearchBar";
 import "./CreateConcept.css";
+var conceptId = "";
 
 class CreateConcept extends React.Component {
 
@@ -14,7 +15,8 @@ class CreateConcept extends React.Component {
       is_remote: "",
       concept_name: "",
       description: "",
-      location: ""
+      location: "",
+      redirect: false
     }
   }
 
@@ -55,7 +57,6 @@ class CreateConcept extends React.Component {
     e.preventDefault();
     const { concept_name, description, is_remote,
             location, skills } = this.state;
-    var conceptId = "";
     axios
       .post('/users/createconcept', {
         concept_name: concept_name,
@@ -79,7 +80,7 @@ class CreateConcept extends React.Component {
         })
       })
       .then( (res) => {
-        this.props.history.push(`/cl/${this.props.user.user_id}/${conceptId}`)
+        this.setState({ redirect: true });
         window.location.reload();
       })
       .catch(err => {
@@ -88,9 +89,12 @@ class CreateConcept extends React.Component {
   }
 
   render() {
-    const { concept_name, description, is_remote, location, skills } = this.state;
+    const { concept_name, description, is_remote, location, skills, redirect } = this.state;
     let hide_location = true;
     is_remote === "no"? hide_location = false:"";
+    if (redirect) {
+      return <Redirect to={`/cl/${this.props.user.user_id}/${conceptId}`} />
+    }
     return (
       <div>
         <Searchbar user={this.props.user} /><br></br><br></br><br></br>

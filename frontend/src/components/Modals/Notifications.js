@@ -28,7 +28,7 @@ class Notifications extends Component {
       message: '',
       modalIsOpen: false,
       seenComments: false,
-      seenFavorites: false,
+      seenLikes: false,
       seenFollowers: false,
       seenPotluckInvitation: false
     }
@@ -43,10 +43,10 @@ class Notifications extends Component {
   closeModal() {
     this.setState({modalIsOpen: false, message: ''});
     axios
-      .patch(`/users/seenFavoritesChangeByUserId/${this.props.id}`)
+      .patch(`/users/seenLikesChangeByUserId/${this.props.id}`)
       .then( () => {
         this.setState({
-          seenFavorites: false
+          seenLikes: false
         })
       })
       .then( () => {
@@ -73,10 +73,10 @@ class Notifications extends Component {
       })
       .then( () => {
         axios
-          .get(`/users/seenFavorites/${this.props.id}`)
+          .get(`/users/seenLikes/${this.props.id}`)
           .then( (res) => {
             this.setState({
-              seenFavorites: res.data
+              seenLikes: res.data
             })
           })
       })
@@ -111,14 +111,15 @@ class Notifications extends Component {
   }
 
   render() {
-    const { seenComments, seenFavorites, seenFollowers, seenPotluckInvitation } = this.state
-    var notificationButton = seenComments.length > 0 || seenFavorites.length > 0 || seenFollowers.length >  0 || seenPotluckInvitation.length > 0? "New Notifications": "No Notifications";
-    var notificationClass = seenComments.length > 0 || seenFavorites.length > 0 || seenFollowers.length >  0 || seenPotluckInvitation.length > 0? "alert notificationButton": "noAlert notificationButton";
+    const { seenComments, seenLikes, seenFollowers, seenPotluckInvitation } = this.state
+    var notificationButton = seenComments.length > 0 || seenLikes.length > 0? "New Notifications": "No Notifications";
+    var notificationClass = seenComments.length > 0 || seenLikes.length > 0? "alert notificationButton": "noAlert notificationButton";
+
     return (
       <div className="Modal">
       <div className="tooltip5">
       <img src={notificationicon} className={notificationClass} onClick={this.openModal} />
-          <span className="tooltiptext5"> {seenComments.length+seenFavorites.length+seenFollowers.length+seenPotluckInvitation.length >= 0 ? seenComments.length+seenFavorites.length+seenFollowers.length+seenPotluckInvitation.length : 0}  Notifications </span>
+          <span className="tooltiptext5"> {seenComments.length+seenLikes.length >= 0 ? seenComments.length+seenLikes.length : 0}  Notifications </span>
       </div>
 
           <Modal
@@ -130,13 +131,13 @@ class Notifications extends Component {
             <ul type="none">
               {seenComments.length > 0? seenComments.map(comment => (
                     <li className="ingredientList" key={Math.random()}>
-                      <Link to={`/cb/${this.props.user}/${comment.recipe_id}`}>💬 you have a new message from {comment.username} for your {comment.recipe_name}</Link>
+                      <Link to={`/cl/${this.props.id}/${comment.concept_id}`}>💬 you have a new message from {comment.username} for your {comment.concept_name}</Link>
                     </li>
                   ))
                   : ""}
-                  {seenFavorites.length > 0? seenFavorites.map(favorites => (
+                  {seenLikes.length > 0? seenLikes.map(likes => (
                     <li className="ingredientList" key={Math.random()}>
-                      {favorites.username} ❤️ your {favorites.recipe_name}
+                      {likes.username} 💡 your {likes.concept_name}
                     </li>
                   ))
                 :""}
@@ -151,7 +152,7 @@ class Notifications extends Component {
                     <Link to={`/cb/potluck/${info.potluck_id}`}>{info.username} invited you to {info.potluck_name}<br/>more info...</Link>
                   </li>
                 )): ""}
-                {(seenComments.length === 0 && seenFavorites.length === 0 && seenFollowers.length === 0 && seenPotluckInvitation.length === 0)? "There are no notifications": ""}
+                {(seenComments.length === 0 && seenLikes.length === 0 && seenFollowers.length === 0 && seenPotluckInvitation.length === 0)? "There are no notifications": ""}
             </ul>
           <button className="xButton" onClick={this.closeModal}>x</button>
           </Modal>

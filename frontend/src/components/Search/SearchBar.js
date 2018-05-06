@@ -178,7 +178,7 @@ class Searchbar extends Component {
             <a
               id="contact"
               className="menu-item"
-              href={`/cl/profile/${this.props.user.user_id}/edit`}
+              href={`/cl`}
               >
               Edit Profile
             </a>
