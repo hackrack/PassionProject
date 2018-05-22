@@ -1,11 +1,17 @@
-import React, { Component } from "react";
+/* eslint-disable */
+import React from "react";
 import { Redirect } from 'react-router';
 import axios from "axios";
-import ReactDOM from "react-dom";
 import Searchbar from "../Search/SearchBar";
 import "./CreateConcept.css";
 var conceptId = "";
-
+const languages =
+[
+  "Select", 'Javascript', "SQL", "Java", "C#",
+  "Python", "PHP", "C++", "C", "Typescript",
+  "Ruby", "Swift", "Objective-C", "Node",
+  "Matlab","Scala", "CoffeeScript", "Haskell",
+]
 class CreateConcept extends React.Component {
 
   constructor(props) {
@@ -16,7 +22,8 @@ class CreateConcept extends React.Component {
       concept_name: "",
       description: "",
       location: "",
-      redirect: false
+      redirect: false,
+      skillsType: []
     }
   }
 
@@ -27,9 +34,22 @@ class CreateConcept extends React.Component {
     });
   }
 
+  handleRemoveSkillsType = idx => () => {
+    const {skillsType} = this.state;
+    this.setState({
+      skillsType: skillsType.filter((s, sidx) => idx !== sidx)
+    });
+  }
+
   handleAddSkills = () => {
     this.setState({
       skills: [...this.state.skills , { name: ''}]
+    });
+  }
+
+  handleTypeSkills = () => {
+    this.setState({
+      skillsType: [...this.state.skillsType , { name: ''}]
     });
   }
 
@@ -39,6 +59,14 @@ class CreateConcept extends React.Component {
         return { ...skill, name: e.target.value };
       });
     this.setState({ skills: newSkills });
+  }
+
+  handleSkillsTypeChange = (idx) => (e) => {
+    const newSkills = this.state.skillsType.map((skill, sidx) => {
+      if (idx !== sidx) return skill;
+        return { ...skill, name: e.target.value };
+      });
+    this.setState({ skillsType: newSkills });
   }
 
   handleFormInput = e => {
@@ -56,7 +84,7 @@ class CreateConcept extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     const { concept_name, description, is_remote,
-            location, skills } = this.state;
+            location, skills, skillsType } = this.state;
     axios
       .post('/users/createconcept', {
         concept_name: concept_name,
@@ -67,7 +95,7 @@ class CreateConcept extends React.Component {
       .then(res => {
         conceptId = res.data.concept_id;
         axios.post(`/users/conceptskills/${res.data.concept_id}`, {
-          skills: skills
+          skills: [...skills, ...skillsType]
         })
       })
       .then( (res) => {
@@ -89,9 +117,9 @@ class CreateConcept extends React.Component {
   }
 
   render() {
-    const { concept_name, description, is_remote, location, skills, redirect } = this.state;
+    const { is_remote, skills, redirect, skillsType } = this.state;
     let hide_location = true;
-    is_remote === "no"? hide_location = false:"";
+    is_remote === "no" ? hide_location = false : "";
     if (redirect) {
       return <Redirect to={`/cl/${this.props.user.user_id}/${conceptId}`} />
     }
@@ -114,14 +142,13 @@ class CreateConcept extends React.Component {
               <h4>Required Skills</h4>
               <div className="formInnerWrap">
                 {skills.map((skill, idx) =>(
-                  <div className="ingredients">
-                    <label className="formLabels"> <b>{`Skill ${idx + 1}`}</b>
-                      <input
-                          list="skills"
-                          value ={skill.name}
-                          onChange={this.handleSkillsChange(idx)}
-                          className="formInput"
-                       />
+                  <div className="formInput">
+                    <label className="label"> <b>{`Skill  ${ idx + 1}`}</b>{" "}
+                      <select onChange={this.handleSkillsChange(idx)}>
+                     {languages.map( (language) => {
+                         return <option value={language}>{language}</option>
+                       })}
+                      </select>
                         <button
                           type="button"
                           className="xButton"
@@ -134,7 +161,30 @@ class CreateConcept extends React.Component {
                   type="button"
                   className="formButton"
                   onClick={this.handleAddSkills}>
-                  ADD SKILLS
+                  SELECT SKILLS
+                </button><br/><br/>
+              {skillsType.map((skill, idx) =>(
+                  <div className="formInput">
+                    <label className="label"> <b>{`Skill  ${ idx + 1}`}</b>{" "}
+                      <input
+                          list="ingredients"
+                          value ={skill.name}
+                          onChange={this.handleSkillsTypeChange(idx)}
+                          className="formInput"
+                       />
+                        <button
+                          type="button"
+                          className="xButton"
+                          onClick={this.handleRemoveSkillsType(idx)}>x
+                        </button>
+                    </label>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="formButton"
+                  onClick={this.handleTypeSkills}>
+                  TYPE SKILLS
                 </button>
                 <br></br><br></br>
                 <button className="formButton">Submit</button>

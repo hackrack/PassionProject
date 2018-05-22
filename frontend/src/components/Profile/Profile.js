@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { Link, Route } from "react-router-dom";
+/* eslint-disable */
+import React from "react";
 import axios from "axios";
 import "./Profile.css";
 import ConceptBox from "../SingleConcept/ConceptBox";
@@ -38,7 +38,7 @@ class Profile extends React.Component {
           .get(`/users/userlikes/${this.props.id}`)
           .then( (res)=> {
             this.setState({
-              concepts: [...this.state.concepts, ...res.data]
+              concepts: [...this.state.concepts,...res.data]
             })
           })
       })
@@ -72,12 +72,11 @@ class Profile extends React.Component {
 
 
   render() {
-    const { username, email, fullname,
-            travel_coverage, location, user_id, skills} = this.props.user;
     if (this.state.user && this.props.user) {
       return(
         <div>
           <Searchbar user={this.props.user} />
+          <br></br><br></br>
           <div className="userProfileContainer">
             <div className="userProfileHeading">
               <img className="userProfileImage" src="https://openclipart.org/download/247324/abstract-user-flat-1.svg" alt="user_img" />
@@ -90,8 +89,15 @@ class Profile extends React.Component {
               </div>
             </div>
           </div>
-          User skills {this.state.skills.map( (skill) => <div>{skill.user_skill}</div>)}
-          {this.state.concepts.map( concept => <div><ConceptBox  concept={concept} key={Math.random()}/></div>) }
+          <div className="user_skills_list">
+            <h3 className="singleRecipeIngredientsTitle"> User skills </h3>
+            <ul>
+              {this.state.skills.map( (skill) =>
+                <li key={Math.random()}>{skill.user_skill}</li>
+              )}
+            </ul>
+          </div>
+          {this.state.concepts.map( concept => <div  key={Math.random()}><ConceptBox  concept={concept}/></div>) }
         </div>
       )
     } else {

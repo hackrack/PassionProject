@@ -1,5 +1,5 @@
+/* eslint-disable */
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import axios from "axios"
 import { Redirect } from "react-router-dom"

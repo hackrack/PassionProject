@@ -18,6 +18,9 @@ router.get('/getsinglecomment/:comment_id', loginRequired, db.getSingleComment);
 router.get('/seenComments/:user_id', loginRequired, db.getSeenForCommentsByUserId);
 router.get('/seenLikes/:user_id', loginRequired, db.getSeenForLikesByUserId);
 router.get('/userconcept/:user_id', loginRequired, db.getUserConcept);
+router.get('/accountOwnerPoints', loginRequired, db.getAccountOwnerPoints);
+router.get('/allconcepts', loginRequired, db.getAllConcepts);
+router.get('/user_skills', loginRequired, db.getUserSkills);
 
 /*------------------------------POST Request------------------------------------*/
 router.post('/login', db.loginUser);

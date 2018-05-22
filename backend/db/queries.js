@@ -237,6 +237,113 @@ function getUserConcept(req, res, next) {
     });
 }
 
+function getAccountOwnerPoints(req, res, next) {
+
+  return db
+    .any(
+      `SELECT
+       question_1,
+       question_2,
+       question_3,
+       question_4,
+       question_5,
+       question_6,
+       question_7,
+       question_8,
+       question_9,
+       question_10,
+       question_11,
+       question_12,
+       question_13,
+       question_14,
+       question_15
+       FROM questionnary
+       WHERE user_id=${req.user.user_id}`
+    )
+    .then(data => {
+      res.json(data)
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}
+
+function getAllConcepts(req, res, next) {
+  return db
+   .any(`
+     SELECT
+     LOWER(string_agg(DISTINCT concept_skill, ', ')) AS ALL_skills,
+     question_1,
+     question_2,
+     question_3,
+     question_4,
+     question_5,
+     question_6,
+     question_7,
+     question_8,
+     question_9,
+     question_10,
+     question_11,
+     question_12,
+     question_13,
+     question_14,
+     question_15,
+     concept_name,
+     concept_timestamp,
+     description, questionnary.user_id, username, concepts.concept_id,
+     COUNT(likes.concept_id) AS bulbs
+     FROM questionnary
+     LEFT JOIN concepts ON (concepts.user_id=questionnary.user_id)
+     INNER JOIN users ON (users.user_id=concepts.user_id)
+     LEFT JOIN likes ON (concepts.concept_id=likes.concept_id)
+     INNER JOIN concept_skills ON (concepts.concept_id=concept_skills.concept_id)
+     WHERE concepts.user_id IN (SELECT USER_id
+     FROM concepts)
+     GROUP BY
+     concept_skills.concept_id,
+     questionnary.question_1,
+     questionnary.question_2,
+     questionnary.question_3,
+     questionnary.question_4,
+     questionnary.question_5,
+     questionnary.question_6,
+     questionnary.question_7,
+     questionnary.question_8,
+     questionnary.question_9,
+     questionnary.question_10,
+     questionnary.question_11,
+     questionnary.question_12,
+     questionnary.question_13,
+     questionnary.question_14,
+     questionnary.question_15,
+     concepts.concept_name, concepts.concept_timestamp, concepts.description,
+     questionnary.user_id, concepts.concept_id, users.username`
+   )
+   .then(data => {
+     res.json(data)
+   })
+   .catch(err => {
+     console.log(err);
+   });
+
+}
+
+function getUserSkills(req, res, next) {
+  return db
+    .any(`SELECT
+          LOWER(string_agg(DISTINCT user_skill, ', '))
+          AS user_skill
+          FROM user_skills
+          WHERE user_id=${req.user.user_id}`
+    )
+    .then(data => {
+      res.json(data)
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}
+
 /*-------------------------------POST Request----------------------------------*/
 function registerUser(req, res, next) {
   return authHelpers
@@ -671,6 +778,9 @@ module.exports = {
   getSeenForCommentsByUserId,
   getSeenForLikesByUserId,
   getUserConcept,
+  getAccountOwnerPoints,
+  getAllConcepts,
+  getUserSkills,
   /*-------POST Request-------*/
   loginUser,
   registerUser,

@@ -1,7 +1,6 @@
+/* eslint-disable */
 import React from "react";
 import axios from "axios";
-import {Link} from "react-router-dom";
-import { Redirect } from "react-router"
 
 class EditConcept extends React.Component {
   constructor() {
@@ -32,7 +31,6 @@ class EditConcept extends React.Component {
       axios
         .get(`/users/conceptskills/${this.props.match.params.concept_id}`)
         .then(res => {
-          console.log("res from concepty skills: ", res.data);
           this.setState({
             skills: res.data
           });
@@ -65,12 +63,6 @@ class EditConcept extends React.Component {
 
   handleRemoveSkills = idx => () => {
     const {skills} = this.state;
-    // skills.filter( (s, sidx) => {
-    //   console.log("sidx: ", sidx);
-    //   console.log("idx: ", idx);
-    //   console.log("check: ", idx !== sidx);
-    //   console.log(s);
-    // })
     this.setState({
       skills: skills.filter((s, sidx) => idx !== sidx)
     });
@@ -141,7 +133,6 @@ class EditConcept extends React.Component {
                 <label className="label">is concept remote?</label>{" "}
                 {" "}<select onChange={this.handleSelect}>
                     <option>{selectValue}</option>
-                    <hr/>
                     <option value="">select</option>
                     <option value="yes">yes</option>
                     <option value="no">no</option>
@@ -151,7 +142,7 @@ class EditConcept extends React.Component {
                 <h4>Required Skills</h4>
                 <div className="formInnerWrap">
                   {skills? skills.map((skill, idx) =>(
-                    <div className="ingredients">
+                    <div className="ingredients" key={Math.random()}>
                       <label className="formLabels"> <b>{`Skill ${idx + 1}`}</b>
                         <input
                             list="skills"

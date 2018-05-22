@@ -1,10 +1,10 @@
-import React, { Component } from "react";
+/* eslint-disable */
+import React from "react";
 import { Link } from "react-router-dom";
 import { Redirect } from "react-router"
 import axios from "axios";
 import Searchbar from "../Search/SearchBar";
 import "./Concept.css";
-
 
 class SingleConcept extends React.Component {
   constructor(props) {
@@ -40,7 +40,7 @@ class SingleConcept extends React.Component {
   }
 
   loadsRecipe = () => {
-    const { username } = this.state
+    const { } = this.state
     axios
       .get(`/users/singleconcept/${this.props.user.concept_id}`)
       .then(res => {
@@ -58,7 +58,7 @@ class SingleConcept extends React.Component {
       .then(() => {
         if (this.props.id === this.state.user_id) {
           axios
-            .patch(`/users/seenCommentsChangeByConceptId/${this.props.user.recipeID}`)
+            .patch(`/users/seenCommentsChangeByConceptId/${this.props.user.concept_id}`)
             .then( () => {
               this.setState({
                 seenCommentsArray: true
@@ -100,13 +100,7 @@ class SingleConcept extends React.Component {
           })
       })
       .then( () => {
-          axios
-            .get(`/users/seenCommentsByRecipeId/${this.props.user.recipeID}`)
-            .then( (res) => {
-              this.setState({
-                seenCommentsArray: res.data
-              })
-            })
+        
       })
       .catch(error => {
         console.log("error in Recipe componentDidMount: ", error);
@@ -116,7 +110,6 @@ class SingleConcept extends React.Component {
 
   handleClickLike = e => {
     e.preventDefault();
-    const { username } = this.state
     if (this.props.id !== this.state.user_id) {
       axios
         .post("/users/favorite", {
@@ -321,7 +314,6 @@ class SingleConcept extends React.Component {
       user_id,
       concept_name,
       description,
-      ingredients,
       comments,
       is_favorite,
       comment,
@@ -329,12 +321,11 @@ class SingleConcept extends React.Component {
       location,
       concept_timestamp,
       skills,
-      redirect,
     } = this.state;
 
     let ts = new Date(concept_timestamp);
     let timestamp = ts.toDateString(ts);
-    if (this.props.user) {
+    if (this.props.userinfo) {
       return (
         <div>
           <Searchbar user={this.props.userinfo}/>
@@ -372,10 +363,10 @@ class SingleConcept extends React.Component {
               </div>
             </div>
             <div className="singleRecipeButtons">
-                <div class="mainButtons">
+                <div className="mainButtons">
                   <br/>
                   { this.props.id === user_id?
-                    <button id="edit_recipe" className="singleRecipeSubmit">Edit Concept</button>:""
+                    <Link to={`/cl/editconcept/${this.props.user.concept_id}`}><button id="edit_recipe" className="singleRecipeSubmit">Edit Concept</button></Link>:""
                   }{" "}
                   { this.props.id === user_id?
                     <Link to={`/cl/profile/${this.props.id}`}><button id="delete_recipe" className="singleRecipeSubmit" onClick={this.handleClickDelete}>Delete Concept</button></Link>: ""

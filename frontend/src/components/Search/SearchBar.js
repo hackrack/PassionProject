@@ -1,19 +1,11 @@
+/* eslint-disable */
 import React, { Component } from "react";
 import { slide as Menu } from "react-burger-menu";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import Modal from "react-modal";
 import "./SearchBar.css";
 import Notifications from "../Modals/Notifications";
-
-
-function getSuggestionValue(suggestion) {
-  return suggestion.identifier;
-}
-
-function renderSuggestion(suggestion) {
-  return <span>{suggestion.identifier}</span>;
-}
 
 const customStyles = {
   content: {
@@ -36,13 +28,7 @@ class Searchbar extends Component {
     super(props);
 
     this.state = {
-      searchInput: "",
-      value: "",
-      suggestions: [],
-      redirect: false,
-      redirectLanding: false,
       modalIsOpen: false,
-      finalSuggestion: "",
       message: ""
     };
     this.openModal = this.openModal.bind(this);
@@ -61,12 +47,6 @@ class Searchbar extends Component {
       .catch(error => {
         console.log(error);
       });
-  };
-
-  handleInput = e => {
-    this.setState({
-      [e.target.name]: e.target.value
-    });
   };
 
   handleModalClick = e => {
@@ -89,51 +69,6 @@ class Searchbar extends Component {
     });
   };
 
-  onSuggestionsFetchRequested = ({ value }) => {
-    fetch(`/users/searchbyrecipe/${value}`)
-      .then(response => response.json())
-      .then(data => {
-        const dataFormatted = data.map((elem, index) => {
-          if (index === 0) {
-            return { title: "recipe name", info: elem };
-          }
-          if (index === 1) {
-            return { title: "username", info: elem };
-          }
-          if (index === 2) {
-            return { title: "full name", info: elem };
-          }
-        });
-
-        const newData = dataFormatted
-          .map(elem => elem.info)
-          .reduce((prev, curr) => prev.concat(curr));
-
-        this.setState({
-          suggestions: newData,
-          searchInput: data
-        });
-      });
-  };
-
-  onSuggestionsClearRequested = () => {
-    this.setState({
-      suggestions: []
-    });
-  };
-
-  onSuggestionSelected = (
-    event,
-    { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }
-  ) => {
-    this.setState({
-      finalSuggestion: [suggestion],
-      redirect: true,
-      value: "",
-      modalIsOpen: true
-    });
-  };
-
   showSettings(event) {
     event.preventDefault();
   }
@@ -141,16 +76,10 @@ class Searchbar extends Component {
 
 
   render() {
-    const { value, suggestions, redirectLanding } = this.state;
-    const inputProps = {
-      placeholder: "Search by recipe, username, full name",
-      value,
-      onChange: this.onChange,
-      onKeyPress: this.onKeyPress
-    };
+    const { } = this.state;
     return (
       <div className="searchbar">
-        <Link to={`/cl/feed`}>
+        <Link to={`/cl/feeds`}>
           <img className="searchbarLogoName hoverIncrease" src="https://cluster-web-static.storage.googleapis.com/images/marketing/presskit/cluster-logo-blue-v279f29aa.png" />
         </Link>
         <div className="menuicons">
@@ -196,7 +125,7 @@ class Searchbar extends Component {
           >
             Create a Concept
           </a>
-            <a id="contact" className="menu-item" href="/cb/feed">
+            <a id="contact" className="menu-item" href="/cl/feeds">
               Feed
             </a>
           <a
@@ -210,30 +139,11 @@ class Searchbar extends Component {
           </Menu>
         </div>
 
-      <Modal
+        <Modal
           isOpen={this.state.modalIsOpen}
           onRequestClose={this.closeModal}
           style={customStyles}
         >
-           <h2 ref={subtitle => (this.subtitle = subtitle)}>Search results</h2>
-          <form onSubmit={this.handleLoginFormSubmit} />
-          {this.state.finalSuggestion
-            ? this.state.finalSuggestion.map(elem => {
-                const link = elem.recipe_id
-                  ? `/cb/${elem.username}/${elem.recipe_id}`
-                  : `/cb/profile/${elem.user_id}`;
-                return (
-                  <Link
-                    to={link}
-                    className="searchLink"
-                    onClick={this.handleModalClick}
-                  >
-                    <p key={Math.random()}> {elem.identifier} </p>
-                  </Link>
-                );
-              })
-            : "no results"}
-          <br />
           <button onClick={this.closeModal}>close</button>
         </Modal>
       </div>
