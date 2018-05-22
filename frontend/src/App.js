@@ -1,9 +1,10 @@
+/* eslint-disable */
 import React, { Component } from 'react';
-import { Route, Link, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import Cluster from './components/Cluster';
 import Home from './components/Home/Home';
 import './App.css';
-import {ButtonToolbar, Button} from "react-bootstrap"
+
 
 class App extends Component {
   render() {

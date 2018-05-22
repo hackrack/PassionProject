@@ -1,9 +1,7 @@
-import React,  { Component } from "react";
+/* eslint-disable */
+import React from "react";
 import axios from "axios";
-import ReactDOM from "react-dom";
 import "./Register.css";
-import Searchbar from "../Search/SearchBar";
-import { Redirect } from 'react-router';
 
 let questions =
 [
@@ -24,6 +22,14 @@ let questions =
   {id: 15,q: "Are you honest?"}
 ];
 
+const languages =
+[
+  "Select", 'Javascript', "SQL", "Java", "C#",
+  "Python", "PHP", "C++", "C", "Typescript",
+  "Ruby", "Swift", "Objective-C", "Node",
+  "Matlab","Scala", "CoffeeScript", "Haskell",
+]
+
 class Register extends React.Component {
   constructor() {
     super();
@@ -39,9 +45,9 @@ class Register extends React.Component {
       message: "",
       points: [],
       remoteInfo: "",
-      user_id: "",
       redirect: false,
-      user_id: ""
+      user_id: "",
+      skillsType: []
     }
   }
 
@@ -52,9 +58,22 @@ class Register extends React.Component {
     });
   }
 
+  handleRemoveSkillsType = idx => () => {
+    const {skillsType} = this.state;
+    this.setState({
+      skillsType: skillsType.filter((s, sidx) => idx !== sidx)
+    });
+  }
+
   handleAddSkills = () => {
     this.setState({
       skills: [...this.state.skills , { name: ''}]
+    });
+  }
+
+  handleTypeSkills = () => {
+    this.setState({
+      skillsType: [...this.state.skillsType , { name: ''}]
     });
   }
 
@@ -64,6 +83,14 @@ class Register extends React.Component {
         return { ...skill, name: e.target.value };
       });
     this.setState({ skills: newSkills });
+  }
+
+  handleSkillsTypeChange = (idx) => (e) => {
+    const newSkills = this.state.skillsType.map((skill, sidx) => {
+      if (idx !== sidx) return skill;
+        return { ...skill, name: e.target.value };
+      });
+    this.setState({ skillsType: newSkills });
   }
 
   handleFormInput = e => {
@@ -89,9 +116,8 @@ class Register extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const {username, fullname, email,
-           password, confirm_pass,
-           location, skills, points, travel_coverage } = this.state;
+    const {username, fullname, email,password,
+           location, skills, points, travel_coverage, skillsType } = this.state;
     var userId = "";
     axios
       .post('/users/register', {
@@ -115,7 +141,7 @@ class Register extends React.Component {
       .then( () => {
         axios.post(`/users/addSkills`, {
           user_id: userId,
-          skills: skills
+          skills: [...skills, ...skillsType]
         })
       })
       .then( () => {
@@ -151,7 +177,8 @@ class Register extends React.Component {
   }
 
   render() {
-    const { confirm_pass, password, username, email, skills, points, remoteInfo, travel_coverage, redirect, user_id } = this.state;
+    const { confirm_pass, password,
+            skills, skillsType } = this.state;
     // if (redirect) {
     //   return <Redirect to={`/cl/profile/${user_id}`} />
     // }
@@ -174,8 +201,8 @@ class Register extends React.Component {
           <p> {password !== confirm_pass && confirm_pass? 'passwords do not match' : ''} </p>
           <p> {password && password.length < 6 ? 'password must be 6 characters' : ''} </p>
           <h4>Personal Characteristics</h4>
-          {questions.map( (question) => {
-            return <div className="userProfileSelectContainer">
+          {questions.map( (question, i) => {
+            return <div className="userProfileSelectContainer" key={i}>
                 <p className="selectUserRecipeTagline">{question.q}{" "}</p>
                 <div className="select-style">
                   <select onChange={this.handleSelectValue} id={question.id}>
@@ -192,14 +219,13 @@ class Register extends React.Component {
             <h4>Your Skills</h4>
             <div className="formInnerWrap">
               {skills.map((skill, idx) =>(
-                <div className="ingredients">
-                  <label className="formLabels"> <b>{`Skill ${idx + 1}`}</b>
-                    <input
-                        list="skills"
-                        value ={skill.name}
-                        onChange={this.handleSkillsChange(idx)}
-                        className="formInput"
-                     />
+                <div className="formInput" key={idx}>
+                  <label className="label"> <b>{`Skill  ${ idx + 1}`}</b>{" "}
+                    <select onChange={this.handleSkillsChange(idx)}>
+                   {languages.map( (language, i) => {
+                       return <option  key={i} value={language}>{language}</option>
+                     })}
+                    </select>
                       <button
                         type="button"
                         className="xButton"
@@ -212,7 +238,30 @@ class Register extends React.Component {
                 type="button"
                 className="formButton"
                 onClick={this.handleAddSkills}>
-                ADD SKILLS
+                SELECT SKILLS
+              </button><br/><br/>
+            {skillsType.map((skill, idx) =>(
+                <div className="formInput"  key={idx}>
+                  <label className="label"> <b>{`Skill  ${ idx + 1}`}</b>{" "}
+                    <input
+                        list="ingredients"
+                        value ={skill.name}
+                        onChange={this.handleSkillsTypeChange(idx)}
+                        className="formInput"
+                     />
+                      <button
+                        type="button"
+                        className="xButton"
+                        onClick={this.handleRemoveSkillsType(idx)}>x
+                      </button>
+                  </label>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="formButton"
+                onClick={this.handleTypeSkills}>
+                TYPE SKILLS
               </button>
               <br></br><br></br>
               <button className="formButton">Register</button>

@@ -24,3 +24,10 @@
 .userProfileName {
   margin: 0;
 }
+
+.user_skills_list {
+  width: 20%;
+  margin-left: 40%;
+  margin-top: 5%;
+  border-radius: 1%;
+}

@@ -1,10 +1,9 @@
+/* eslint-disable */
 import React from "react";
 import axios from "axios";
-import ReactDOM from "react-dom";
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import ConceptBox from "../SingleConcept/ConceptBox";
 import LoginUser from "../Modals/LoginUser";
-
 import "./Home.css";
 
 class Home extends React.Component {
@@ -40,7 +39,7 @@ class Home extends React.Component {
          })
       })
       .catch( (err) => {
-        console.log(err);
+        console.log(err.response.statusText);
       })
   }
 
@@ -59,13 +58,11 @@ class Home extends React.Component {
       <div className="home_div">
         <p>got idea and you want to implement it? make your team, to make your dream</p>
         <div className="landButton">
-          <button className="button">
-            <LoginUser />
-          </button>
+            <div className="button" type="button"><LoginUser /></div>
           {loggedIn !== "loggedIn"?<button onClick={this.handleClickRegister} className="button">Register</button> :""}
         </div>
         <br/>
-        {concepts.map( concept => <div onClick={this.handleConceptBox}><ConceptBox  concept={concept} key={Math.random()}/></div>) }
+        {concepts.map( concept => <div onClick={this.handleConceptBox} key={Math.random()}><ConceptBox  concept={concept} /></div>) }
       </div>
     );
   }

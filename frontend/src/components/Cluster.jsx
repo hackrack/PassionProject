@@ -1,20 +1,20 @@
+/* eslint-disable */
 import React from 'react';
 import axios from 'axios';
-import { Route, Switch } from 'react-router';
-import { Redirect } from 'react-router';
+import { Route, Switch, Redirect } from 'react-router';
 import Register from "./Register/Register"
 import Profile from "./Profile/Profile";
 import CreateConcept from './SingleConcept/CreateConcept';
 import Concept from './SingleConcept/SingleConcept';
 import EditConcept from './SingleConcept/EditConcept';
-import EditUser from './Profile/EditUser';
+import Feeds from './Feeds/Feeds';
 
 class Cluster extends React.Component {
   constructor() {
     super();
     this.state = {
       user: "",
-      fetchingUser: ""
+      fetchingUser: "",
     }
   }
 
@@ -29,7 +29,7 @@ class Cluster extends React.Component {
         }
       })
       .catch(error => {
-        console.log('user fetch did not work')
+        console.log(error.response.data.status)
       })
   }
 
@@ -52,9 +52,13 @@ class Cluster extends React.Component {
   }
 
   renderSingleConcept = props => {
-    const { user_id, concept_id } = props.match.params
     const { user } = this.state
     return <Concept id={user.user_id} user={props.match.params}  userinfo={user} />
+  }
+
+  renderFeeds = props => {
+    const { user } = this.state;
+    return <Feeds id={user.user_id} />
   }
 
   render() {
@@ -64,8 +68,10 @@ class Cluster extends React.Component {
          <Route path="/cl/register" component={Register} />
          <Route path="/cl/profile/:user_id" render={this.renderUserProfile} />
          <Route path='/cl/createconcept' render={this.renderCreateConcept} />
+         <Route path='/cl/editconcept/:concept_id' component={EditConcept} />
+         <Route path='/cl/feeds' render={this.renderFeeds} />
          <Route exact path='/cl/:user_id/:concept_id' render={this.renderSingleConcept} />
-         <Route path='/cl/:concept_id' component={EditConcept} />
+         <Route exact path='/cl/:some/:concept_id' render={this.renderSingleConcept} />
        </Switch>
      </div>
    )
