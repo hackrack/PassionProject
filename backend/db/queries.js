@@ -84,15 +84,16 @@ function getSingleUser(req, res, next) {
 function getAllUserLikes(req, res, next) {
   return db
     .any(
-      `SELECT concepts.*,
+      `SELECT concepts.*, username,
        COUNT(likes.concept_id) AS bulbs
        FROM concepts
        INNER JOIN likes ON (concepts.concept_id=likes.concept_id)
+       INNER JOIN users ON (users.user_id=concepts.user_id)
        WHERE concepts.concept_id
        IN (SELECT concept_id
        FROM likes
        WHERE user_id=$1)
-       GROUP BY concepts.concept_id`,
+       GROUP BY concepts.concept_id, users.username`,
        [req.params.user_id]
      )
      .then(data => {
@@ -338,6 +339,22 @@ function getUserSkills(req, res, next) {
     )
     .then(data => {
       res.json(data)
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}
+
+function seenCommentsByConcept_id(req, res, next) {
+  db
+    .any(
+      `SELECT seen FROM comments
+       INNER JOIN concepts ON(comments.concept_id=concepts.concept_id)
+       WHERE seen=FALSE
+       AND concepts.concept_id=${req.params.concept_id};`
+    )
+    .then(data => {
+      res.json(data);
     })
     .catch(err => {
       console.log(err);
@@ -781,6 +798,7 @@ module.exports = {
   getAccountOwnerPoints,
   getAllConcepts,
   getUserSkills,
+  seenCommentsByConcept_id,
   /*-------POST Request-------*/
   loginUser,
   registerUser,

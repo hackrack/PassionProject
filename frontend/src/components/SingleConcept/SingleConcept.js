@@ -100,7 +100,13 @@ class SingleConcept extends React.Component {
           })
       })
       .then( () => {
-        
+        axios
+          .get(`/users/seenCommentsByConcept_id/${this.props.user.concept_id}`)
+          .then( (res) => {
+            this.setState({
+              seenCommentsArray: res.data
+            })
+          })
       })
       .catch(error => {
         console.log("error in Recipe componentDidMount: ", error);
@@ -376,7 +382,8 @@ class SingleConcept extends React.Component {
             </div>
 
             </div>
-
+            {this.props.id != this.state.user_id? <button className="btn btn-success" style={{"marginLeft":"68%"}}>Want join</button>:""}
+            <br></br><br></br>
             <div className="singleRecipeLeft">
               <h3 className="singleRecipeIngredientsTitle"> Wanted Skills </h3>
               <ul type="none">

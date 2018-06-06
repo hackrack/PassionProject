@@ -2,7 +2,7 @@
 import React from "react"
 import { Link } from 'react-router-dom';
 import "./ConceptBox.css";
-
+import axios from "axios";
 
 
 function findLanguage(arr1, arr2) {
@@ -66,7 +66,7 @@ class ConceptBox extends React.Component {
     const { concept_name, username,
             bulbs, skillssortedbyid, concept_id,
             user_id, description, concept_timestamp } = this.props.concept;
-    const { ownerPoints, othersPoints, userSkills, conceptSkills} = this.props;
+    const { ownerPoints, othersPoints, userSkills, conceptSkills, accountOwner, userId } = this.props;
     let ts = new Date(concept_timestamp);
     let timestamp = ts.toDateString(ts);
     let cuttedDescription = description.split(" ").slice(0,10).join(" ");
@@ -77,13 +77,13 @@ class ConceptBox extends React.Component {
 
     return (
       <div className="concept_box">
-        <Link to={`/cl/${user_id}/${concept_id}`} style={{ textDecoration: 'none' }}>
+        <Link to={`/cl/${user_id}/${concept_id}`} style={{ "textDecoration": 'none' }}>
           <h3>{username}</h3>
           <h2>{concept_name}</h2>
           <p>description: {cuttedDescription}...More info</p>
           <p>required skills: {skillssortedbyid}</p>
-          {ownerPoints && othersPoints?<h3>Personal match with {username} {showPercentage}</h3>:""}
-          {userSkills && conceptSkills?<h3>Skills match with {concept_name} {showSkillsPercentage}</h3>:""}
+          {accountOwner != user_id && ownerPoints && othersPoints?<h3>Personal match with {username} {showPercentage}</h3>:""}
+          {accountOwner != user_id && userSkills && conceptSkills?<h3>Skills match with {concept_name} {showSkillsPercentage}</h3>:""}
           <div className="likes">
             <img
               src="https://cdn0.iconfinder.com/data/icons/colourful-education/250/bulb-512.png" alt="bulbs"
@@ -92,6 +92,8 @@ class ConceptBox extends React.Component {
           <p className="fav">{bulbs}</p>
           </div>
           <p>uploaded {timestamp}</p>
+            {userId == user_id? <p style={{"fontSize": "10px", "color":"red", "marginLeft":"70%"}}>*This is your concept</p>:""}
+            {accountOwner == user_id && userId !== user_id? <p style={{"fontSize": "10px", "color":"red", "marginLeft":"70%"}}>* user's concept</p>:""}
         </Link>
       </div>
     )

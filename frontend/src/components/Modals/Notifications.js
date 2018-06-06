@@ -91,7 +91,7 @@ class Notifications extends Component {
 
   render() {
     const { seenComments, seenLikes } = this.state
-    // var notificationButton = seenComments.length > 0 || seenLikes.length > 0? "New Notifications": "No Notifications";
+    var notificationButton = seenComments.length > 0 || seenLikes.length > 0? "New Notifications": "No Notifications";
     var notificationClass = seenComments.length > 0 || seenLikes.length > 0? "alert notificationButton": "noAlert notificationButton";
 
     return (

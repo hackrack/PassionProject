@@ -21,6 +21,7 @@ router.get('/userconcept/:user_id', loginRequired, db.getUserConcept);
 router.get('/accountOwnerPoints', loginRequired, db.getAccountOwnerPoints);
 router.get('/allconcepts', loginRequired, db.getAllConcepts);
 router.get('/user_skills', loginRequired, db.getUserSkills);
+router.get('/seenCommentsByConcept_id/:concept_id', loginRequired, db.seenCommentsByConcept_id);
 
 /*------------------------------POST Request------------------------------------*/
 router.post('/login', db.loginUser);

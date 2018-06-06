@@ -10,9 +10,14 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      concepts: [],
+      user_concepts: [],
+      others_concepts: [],
       skills: [],
-      user: ""
+      user: "",
+      accountOwnerPoints: [],
+      allconcepts: [],
+      user_skills: "",
+      userInfo: []
     }
   }
 
@@ -29,7 +34,7 @@ class Profile extends React.Component {
           .get(`/users/userconcept/${this.props.id}`)
           .then( (res) => {
             this.setState({
-              concepts: res.data
+              user_concepts: res.data
             })
           })
       })
@@ -38,7 +43,7 @@ class Profile extends React.Component {
           .get(`/users/userlikes/${this.props.id}`)
           .then( (res)=> {
             this.setState({
-              concepts: [...this.state.concepts,...res.data]
+              others_concepts: res.data
             })
           })
       })
@@ -49,6 +54,34 @@ class Profile extends React.Component {
             this.setState({
               skills: res.data
             })
+          })
+      })
+      .then( () => {
+        axios
+          .get('/users/accountOwnerPoints')
+          .then( (res) => {
+            var points = Object.values(res.data[0]);
+            this.setState({
+              accountOwnerPoints: points
+            })
+          })
+          .then( () => {
+            axios
+              .get('/users/user_skills')
+              .then( (res) => {
+                this.setState({
+                  user_skills: res.data[0]['user_skill']
+                })
+              })
+          })
+          .then( () => {
+            axios
+              .get('/users/allconcepts')
+              .then( (res) => {
+                this.setState({
+                  allconcepts: res.data
+                })
+              })
           })
       })
       .catch( (err) => {
@@ -72,6 +105,30 @@ class Profile extends React.Component {
 
 
   render() {
+    const { user_skills, allconcepts, accountOwnerPoints, userInfo, user_concepts, others_concepts } = this.state;
+    let concepts = [...user_concepts, ...others_concepts];
+    let userSkills = user_skills.split(", ")
+    let othersPoints = [];
+    let all_skills = [];
+    allconcepts.forEach( (ele, i) => {
+      var subArr = [];
+      for (var key in ele) {
+        if (key.includes('question')) {
+          subArr.push(ele[key]);
+        }
+      }
+      othersPoints.push(subArr);
+    })
+    allconcepts.forEach( (ele, i) => {
+      var subArr = [];
+      for (var key in ele) {
+        if (key.includes('all_skills')) {
+          subArr = ele[key].split(", ");
+        }
+      }
+      all_skills.push(subArr);
+    })
+    let userId = this.props.user.user_id;
     if (this.state.user && this.props.user) {
       return(
         <div>
@@ -81,10 +138,10 @@ class Profile extends React.Component {
             <div className="userProfileHeading">
               <img className="userProfileImage" src="https://openclipart.org/download/247324/abstract-user-flat-1.svg" alt="user_img" />
               <div className="userProfileName">
-                <p>username {this.state.user[0].username}</p>
-                <p>fullname {this.state.user[0].fullname}</p>
-                <p>email {this.state.user[0].email}</p>
-                <p>location {this.state.user[0].location}</p>
+                <p>username <strong>{this.state.user[0].username}</strong></p>
+                <p>fullname <strong>{this.state.user[0].fullname}</strong></p>
+                <p>email <strong>{this.state.user[0].email}</strong></p>
+                <p>location <strong>{this.state.user[0].location}</strong></p>
                 <p>travel coverage {this.state.user[0].travel_coverage}</p>
               </div>
             </div>
@@ -97,7 +154,19 @@ class Profile extends React.Component {
               )}
             </ul>
           </div>
-          {this.state.concepts.map( concept => <div  key={Math.random()}><ConceptBox  concept={concept}/></div>) }
+          {concepts.map( (concept, i) =>
+            <div  key={Math.random()}>
+              <ConceptBox
+                accountOwner={this.props.id}
+                ownerPoints={accountOwnerPoints}
+                othersPoints={othersPoints[i]}
+                userSkills={userSkills}
+                conceptSkills={all_skills[i]}
+                concept={concept}
+                userId={userId}
+              />
+            </div>)
+          }
         </div>
       )
     } else {
